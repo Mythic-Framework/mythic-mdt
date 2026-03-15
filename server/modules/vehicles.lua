@@ -87,6 +87,28 @@ _MDT.Vehicles = {
 					vehicle.Owner.JobName = vehicle.Owner.JobName .. " (Dealership Buyback)"
 				end
 			end
+
+			-- Resolve storage location name
+			if vehicle.Storage then
+				if vehicle.Storage.Type == 0 then
+					vehicle.Storage.Name = Vehicles.Garages:Impound().name
+				elseif vehicle.Storage.Type == 1 then
+					local garage = Vehicles.Garages:Get(vehicle.Storage.Id)
+					vehicle.Storage.Name = garage and garage.name or "Unknown Garage"
+				elseif vehicle.Storage.Type == 2 then
+					local prop = Properties:Get(vehicle.Storage.Id)
+					vehicle.Storage.Name = prop and prop.label or "Unknown Property"
+				end
+			end
+
+			-- Check radar flags
+			if vehicle.RegisteredPlate then
+				local flagged = Radar:CheckPlate(vehicle.RegisteredPlate)
+				if flagged and flagged ~= "Vehicle Flagged in MDT" then
+					vehicle.RadarFlag = flagged
+				end
+			end
+
 			p:resolve(vehicle)
 		end)
 		return Citizen.Await(p)

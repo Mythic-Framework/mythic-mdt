@@ -14,32 +14,45 @@ import MenuItem from './MenuItem';
 
 const useStyles = makeStyles((theme) => ({
 	link: {
-		color: theme.palette.text.main,
-		height: 60,
-		transition: 'color ease-in 0.15s, background-color ease-in 0.15s',
-		'& svg': {
-			fontSize: 20,
+		color: 'rgba(255,255,255,0.5)',
+		height: 52,
+		borderLeft: '3px solid transparent',
+		transition: 'color ease-in 0.15s, background ease-in 0.15s, border-color ease-in 0.15s',
+		'& .MuiListItemIcon-root': {
+			minWidth: 36,
+			color: 'rgba(255,255,255,0.35)',
 			transition: 'color ease-in 0.15s',
 		},
+		'& svg': {
+			fontSize: 16,
+		},
+		'& .MuiListItemText-primary': {
+			fontSize: 13,
+			fontWeight: 500,
+			letterSpacing: '0.03em',
+		},
 		'&:hover': {
-			color: `${theme.palette.primary.main}`,
+			color: theme.palette.primary.main,
+			background: `${theme.palette.primary.main}0f`,
+			borderLeftColor: `${theme.palette.primary.main}60`,
 			cursor: 'pointer',
-			'& svg': {
-				color: `${theme.palette.primary.main}`,
+			'& .MuiListItemIcon-root': {
+				color: theme.palette.primary.main,
 			},
 		},
 		'&.active': {
 			color: theme.palette.primary.main,
-			'& svg': {
+			background: `${theme.palette.primary.main}15`,
+			borderLeftColor: theme.palette.primary.main,
+			'& .MuiListItemIcon-root': {
 				color: theme.palette.primary.main,
-				'--fa-secondary-opacity': 1.0,
 			},
 		},
 	},
 	icon: {
-        fontSize: '0.75vh',
-        transition: '.5s',
-        color: theme.palette.primary.main,
+		fontSize: 10,
+		transition: 'transform 0.3s ease',
+		color: 'rgba(255,255,255,0.3)',
 	},
 }));
 

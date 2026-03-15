@@ -10,13 +10,17 @@ export default () => {
 	const alerts = useSelector((state) => state.alerts.alerts);
 	const showing = useSelector((state) => state.alerts.showing);
 	const useStyles = makeStyles((theme) => ({
-		container: {
-			height: showing ? '60%' : '100%',
-			width: '100%',
-			overflowY: 'auto',
-			overflowX: 'hidden',
-		},
-	}));
+	container: {
+	height: showing ? '60%' : '100%',
+	width: '100%',
+	overflowY: 'auto',
+	overflowX: 'hidden',
+	 padding: '8px 10px',
+		'&::-webkit-scrollbar': { width: 4 },
+		'&::-webkit-scrollbar-track': { background: 'transparent' },
+		'&::-webkit-scrollbar-thumb': { background: `${theme.palette.primary.main}50`, borderRadius: 2 },
+	},
+}));
 	const classes = useStyles();
 
 	const onReset = () => {

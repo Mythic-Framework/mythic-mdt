@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import Truncate from '@nosferatu500/react-truncate';
+const Truncate = ({ lines, children }) => <span style={{ display: '-webkit-box', WebkitLineClamp: lines, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>{children}</span>;
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { toast } from 'react-toastify';

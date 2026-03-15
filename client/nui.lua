@@ -122,6 +122,26 @@ RegisterNUICallback("PrintBadge", function(data, cb)
 	Callbacks:ServerCallback("MDT:PrintBadge", data, cb)
 end)
 
+RegisterNUICallback("ViewVehicleFleet", function(data, cb)
+	Callbacks:ServerCallback("MDT:ViewVehicleFleet", data, cb)
+end)
+
+RegisterNUICallback("SetAssignedDrivers", function(data, cb)
+	Callbacks:ServerCallback("MDT:SetAssignedDrivers", data, cb)
+end)
+
+RegisterNUICallback("TrackFleetVehicle", function(data, cb)
+	Callbacks:ServerCallback("MDT:TrackFleetVehicle", data, function(result)
+		if result then
+			DeleteWaypoint()
+			SetNewWaypoint(result.x, result.y)
+			cb(true)
+		else
+			cb(false)
+		end
+	end)
+end)
+
 RegisterNUICallback("RevokeSuspension", function(data, cb)
 	Callbacks:ServerCallback("MDT:RevokeLicenseSuspension", data, cb)
 end)

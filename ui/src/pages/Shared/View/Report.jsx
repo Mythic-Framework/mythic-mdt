@@ -5,7 +5,8 @@ import { makeStyles } from '@mui/styles';
 import { toast } from 'react-toastify';
 import Moment from 'react-moment';
 import { Link, useNavigate } from 'react-router-dom';
-import Lightbox from 'react-image-lightbox';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 import { useParams } from 'react-router';
 
 import { Loader, UserContent } from '../../../components';
@@ -19,11 +20,28 @@ import { ReportTypes, GetOfficerNameFromReportType, GetOfficerJobFromReportType 
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
-		padding: '20px 10px 20px 20px',
+		padding: '20px 16px',
 		height: '100%',
+		overflowY: 'auto',
+		'&::-webkit-scrollbar': { width: 4 },
+		'&::-webkit-scrollbar-track': { background: 'transparent' },
+		'&::-webkit-scrollbar-thumb': { background: `${theme.palette.primary.main}50`, borderRadius: 2 },
+	},
+	actionBar: {
+		'& .MuiButton-root': {
+			borderColor: `${theme.palette.primary.main}40`,
+			color: 'rgba(255,255,255,0.6)',
+			fontSize: 12,
+			letterSpacing: '0.04em',
+			'&:hover': {
+				background: `${theme.palette.primary.main}18`,
+				color: theme.palette.primary.main,
+				borderColor: theme.palette.primary.main,
+			},
+		},
 	},
 	notes: {
-		color: theme.palette.text.alt,
+		color: 'rgba(255,255,255,0.6)',
 		padding: '8px 16px',
 		whiteSpace: 'pre-line',
 		'& img': {
@@ -32,21 +50,21 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
 	link: {
-		color: theme.palette.text.alt,
+		color: 'rgba(255,255,255,0.5)',
 		transition: 'color ease-in 0.15s',
 		'&:hover': {
 			color: theme.palette.primary.main,
 		},
 	},
 	officerLink: {
-		color: theme.palette.text.alt,
+		color: 'rgba(255,255,255,0.5)',
 		transition: 'color ease-in 0.15s',
 		'&:hover': {
 			color: theme.palette.primary.main,
 		},
 		'&:not(:last-of-type)': {
 			content: '", "',
-			color: theme.palette.text.main,
+			color: 'rgba(255,255,255,0.6)',
 		},
 	},
 }));
@@ -274,8 +292,8 @@ export default ({ match }) => {
 			) : (
 				<>
 					<Grid className={classes.wrapper} container spacing={2}>
-						<Grid item xs={12}>
-							<ButtonGroup fullWidth>
+						<Grid item xs={12} className={classes.actionBar}>
+						<ButtonGroup variant="outlined" fullWidth>
 								<Button onClick={fetch} disabled={loading}>
 									Refresh
 								</Button>
@@ -515,16 +533,11 @@ export default ({ match }) => {
 					</Grid>
 					{report.evidence.length > 0 && pOpen && (
 						<Lightbox
-							mainSrc={report.evidence[pIndex].value}
-							nextSrc={report.evidence[(pIndex + 1) % report.evidence.length].value}
-							prevSrc={
-								report.evidence[(pIndex + report.evidence.length - 1) % report.evidence.length].value
-							}
-							onCloseRequest={() => setPOpen(false)}
-							onMovePrevRequest={() =>
-								setPIndex((pIndex + report.evidence.length - 1) % report.evidence.length)
-							}
-							onMoveNextRequest={() => setPIndex((pIndex + 1) % report.evidence.length)}
+						open={pOpen}
+						close={() => setPOpen(false)}
+						index={pIndex}
+						on={{ view: ({ index }) => setPIndex(index) }}
+						slides={report.evidence.map(e => ({ src: e.value }))}
 						/>
 					)}
 				</>

@@ -1,102 +1,22 @@
+const TealPrimary = {
+	main: '#00c9b1',
+	light: '#4ddece',
+	dark: '#008c7c',
+	contrastText: '#0a0a0a',
+};
+
 export const GetDeptPalette = (workplace, theme) => {
-	switch (workplace) {
-		case 'lspd':
-			return LSPDPalette(theme);
-		case 'lscso':
-			return LSCSOPalette(theme);
-		case 'doj':
-		case 'dattorney':
-		case 'mayoroffice':
-			return DOJPalette(theme);
-		case 'safd':
-			return MedicalPalette(theme);
-		case 'doctors':
-			return MedicalPalette(theme);
-		default:
-			return StandardPalette(theme);
-	}
+	return StandardPalette(theme);
 };
 
-export const LSPDPalette = (theme) => {
-	return {
-		...StandardPalette(theme),
-		primary: {
-			main: '#f9c334',
-			light: '#ecc96a',
-			dark: '#9c791b',
-			contrastText: theme === 'dark' ? '#ffffff' : '#26292d',
-		},
-		secondary: {
-			main: theme === 'dark' ? '#172c42' : '#ffffff',
-			light: theme === 'dark' ? '#233e5a' : '#F5F6F4',
-			dark: theme === 'dark' ? '#0d1721' : '#EBEBEB',
-			contrastText: theme === 'dark' ? '#ffffff' : '#2e2e2e',
-		},
-	};
-};
-
-export const LSCSOPalette = (theme) => {
-	return {
-		...StandardPalette(theme),
-		primary: {
-			main: '#4a93b7',
-			light: '#7ec3e9',
-			dark: '#016587',
-			contrastText: theme === 'dark' ? '#ffffff' : '#26292d',
-		},
-		secondary: {
-			main: theme === 'dark' ? '#2e2e2e' : '#ffffff',
-			light: theme === 'dark' ? '#121212' : '#F5F6F4',
-			dark: theme === 'dark' ? '#151515' : '#EBEBEB',
-			contrastText: theme === 'dark' ? '#ffffff' : '#2e2e2e',
-		},
-	};
-};
-
-export const DOJPalette = (theme) => {
-	return {
-		...StandardPalette(theme),
-		primary: {
-			main: '#009688',
-			light: '#52c7b8',
-			dark: '#00675b',
-			contrastText: theme === 'dark' ? '#ffffff' : '#26292d',
-		},
-		secondary: {
-			main: theme === 'dark' ? '#1e1e1e' : '#ffffff',
-			light: theme === 'dark' ? '#313131' : '#F5F6F4',
-			dark: theme === 'dark' ? '#151515' : '#EBEBEB',
-			contrastText: theme === 'dark' ? '#ffffff' : '#2e2e2e',
-		},
-	};
-};
-
-export const MedicalPalette = (theme) => {
-	return {
-		...StandardPalette(theme),
-		primary: {
-			main: '#395475',
-			light: '#6780a4',
-			dark: '#072c49',
-			contrastText: theme === 'dark' ? '#ffffff' : '#26292d',
-		},
-		secondary: {
-			main: theme === 'dark' ? '#1e1e1e' : '#ffffff',
-			light: theme === 'dark' ? '#313131' : '#F5F6F4',
-			dark: theme === 'dark' ? '#151515' : '#EBEBEB',
-			contrastText: theme === 'dark' ? '#ffffff' : '#2e2e2e',
-		},
-	};
-};
+export const LSPDPalette = (theme) => StandardPalette(theme);
+export const LSCSOPalette = (theme) => StandardPalette(theme);
+export const DOJPalette = (theme) => StandardPalette(theme);
+export const MedicalPalette = (theme) => StandardPalette(theme);
 
 export const StandardPalette = (theme) => {
 	return {
-		primary: {
-			main: '#8a0000',
-			light: '#ff2100',
-			dark: '#560000',
-			contrastText: '#ffffff',
-		},
+		primary: TealPrimary,
 		secondary: {
 			main: '#141414',
 			light: '#1c1c1c',

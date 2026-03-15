@@ -11,7 +11,10 @@ const useStyles = makeStyles((theme) => ({
 	wrapper: {
 		height: '100%',
 		width: '100%',
-		border: `10px solid #000`,
+		border: `2px solid ${theme.palette.primary.main}40`,
+		borderTop: 'none',
+		background: theme.palette.secondary.main,
+		boxShadow: `0 0 40px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.03)`,
 		transition: 'opacity 500ms',
 	},
 	inner: {

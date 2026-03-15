@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import parse from 'html-react-parser';
-import Lightbox from 'react-image-lightbox';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 import Embed from 'react-tiny-oembed';
 import { Sanitize } from '../../util/Parser';
 import { Link } from 'react-router-dom';
@@ -97,7 +98,7 @@ export default (props) => {
 					},
 				})}
 			</div>
-			{lbImg != null && <Lightbox mainSrc={lbImg} onCloseRequest={() => setLbImg(null)} />}
+			{lbImg != null && <Lightbox open={lbImg != null} close={() => setLbImg(null)} slides={[{ src: lbImg }]} />}
 		</>
 	);
 };

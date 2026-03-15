@@ -4,54 +4,62 @@ import { Slide, Chip, IconButton, Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Moment from 'react-moment';
-import Truncate from '@nosferatu500/react-truncate';
+const Truncate = ({ lines, children }) => <span style={{ display: '-webkit-box', WebkitLineClamp: lines, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>{children}</span>;
 
 import Nui from '../../../util/Nui';
 import { usePermissions } from '../../../hooks';
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
-		borderLeft: `6px solid ${theme.palette.primary.dark}`,
-		padding: 10,
-		background: `${theme.palette.secondary.main}c7`,
-		marginBottom: 10,
+		borderLeft: `4px solid ${theme.palette.primary.main}`,
+		padding: '10px 12px',
+		background: theme.palette.secondary.dark,
+		marginBottom: 8,
+		borderRadius: '0 4px 4px 0',
+		boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
 		'&.type-1': {
-			borderLeft: `6px solid ${theme.palette.info.dark}`,
-			background: `${theme.palette.info.main}c7`,
+			borderLeftColor: theme.palette.info.main,
+			background: `${theme.palette.info.dark}22`,
 			'&.panic': {
 				'-webkit-animation': 'pd-panic 1s infinite, pd-panic-border 1s infinite',
 			},
 		},
 		'&.type-2': {
-			borderLeft: `6px solid #2b0215`,
-			background: `#760036c7`,
+			borderLeftColor: '#e0185a',
+			background: 'rgba(118,0,54,0.18)',
 			'&.panic': {
 				'-webkit-animation': 'ems-panic 1s infinite',
 			},
 		},
 		'&.type-3': {
-			borderLeft: `6px solid #270d3d`,
-			background: `#6818adc7`,
+			borderLeftColor: '#9c4de0',
+			background: 'rgba(104,24,173,0.18)',
 			'&.panic': {
 				'-webkit-animation': 'misc-panic 1s infinite, misc-panic-border 1s infinite',
 			},
 		},
 	},
 	chip: {
-		margin: '0 6px',
+		margin: '0 6px 0 0',
+		height: 20,
+		'& .MuiChip-label': { fontSize: 11, fontWeight: 700, padding: '0 7px' },
 		'&.id': {
-			backgroundColor: theme.palette.text.main,
-			color: theme.palette.secondary.dark,
+			backgroundColor: 'rgba(255,255,255,0.12)',
+			color: '#fff',
 		},
 		'&.code': {
-			backgroundColor: theme.palette.warning.main,
+			backgroundColor: theme.palette.warning.dark,
+			color: '#fff',
 		},
 	},
 	icon: {
-		marginRight: 5,
+		marginRight: 6,
+		opacity: 0.7,
 	},
 	minor: {
-		fontSize: 14,
+		fontSize: 13,
+		marginTop: 4,
+		color: 'rgba(255,255,255,0.65)',
 	},
 }));
 

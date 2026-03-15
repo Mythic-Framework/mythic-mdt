@@ -3,9 +3,26 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme) => ({
+	wrapper: {
+		textAlign: 'right',
+	},
+	workplace: {
+		display: 'block',
+		fontSize: 10,
+		letterSpacing: '0.1em',
+		textTransform: 'uppercase',
+		color: 'rgba(255,255,255,0.4)',
+		marginBottom: 2,
+	},
+	name: {
+		display: 'block',
+		fontSize: 13,
+		fontWeight: 600,
+		color: '#fff',
+	},
 	callsign: {
-		fontSize: 14,
-		color: theme.palette.primary.main,
+	 color: '#fff',
+	 fontWeight: 600,
 	},
 }));
 
@@ -21,56 +38,36 @@ export default () => {
 	switch (job?.Id) {
 		case 'police':
 			return (
-				<>
-					<small>
-						{job.Workplace?.Name}
-					</small>
-					{Boolean(cData) && (
-						<>
-							[
-							<span className={classes.callsign}>
-								{cData.Callsign}
-							</span>
-							]{' '}
-						</>
-					)}
-					<span>
+				<div className={classes.wrapper}>
+					<small className={classes.workplace}>{job.Workplace?.Name}</small>
+					<span className={classes.name}>
+						{Boolean(cData?.Callsign) && (
+							<span className={classes.callsign}>{cData.Callsign} </span>
+						)}
 						{job.Grade?.Name} {cData.First} {cData.Last}
 					</span>
-				</>
+				</div>
 			);
 		case 'government':
 			return (
-				<>
-					<small>
-						{job.Workplace?.Name}
-					</small>
-					<span>
-						{job.Grade?.Name} {cData.First} {cData.Last}
-					</span>
-				</>
+				<div className={classes.wrapper}>
+					<small className={classes.workplace}>{job.Workplace?.Name}</small>
+					<span className={classes.name}>{job.Grade?.Name} {cData.First} {cData.Last}</span>
+				</div>
 			);
 		case 'ems':
 			return (
-				<>
-					<small>
-						{job.Workplace?.Name}
-					</small>
-					{(Boolean(cData) && cData.Callsign) && (
-						<>
-							[
-							<span className={classes.callsign}>
-								{cData.Callsign}
-							</span>
-							]{' '}
-						</>
-					)}
-					<span>
+				<div className={classes.wrapper}>
+					<small className={classes.workplace}>{job.Workplace?.Name}</small>
+					<span className={classes.name}>
+						{Boolean(cData?.Callsign) && (
+							<span className={classes.callsign}>{cData.Callsign} </span>
+						)}
 						{job.Grade?.Name} {cData.First} {cData.Last}
 					</span>
-				</>
+				</div>
 			);
 		default:
-		return null;
+			return null;
 	}
 };

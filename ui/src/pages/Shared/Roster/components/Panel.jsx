@@ -50,35 +50,53 @@ const parseDutyTime = (dutyTime, job) => {
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
-		padding: 20,
+		padding: 16,
 		height: '100%',
 		background: theme.palette.secondary.main,
+		borderLeft: `1px solid ${theme.palette.primary.main}20`,
 	},
 	inner: {
-		padding: 10,
+		padding: 12,
 		background: theme.palette.secondary.dark,
 		height: '100%',
-		border: `3px inset ${theme.palette.border.divider}`,
+		border: `1px solid ${theme.palette.primary.main}20`,
+		borderRadius: 4,
 	},
 	avatar: {
-		height: 250,
-		width: 250,
+		height: 200,
+		width: 200,
 		margin: 'auto',
-		transition: 'filter ease-in 0.15s',
+		border: `2px solid ${theme.palette.primary.main}40`,
+		transition: 'filter ease-in 0.15s, border-color ease-in 0.15s',
 		'&.hoverable:hover': {
 			filter: 'brightness(0.7)',
+			borderColor: theme.palette.primary.main,
 			cursor: 'pointer',
 		},
+	},
+	listItem: {
+		padding: '6px 8px',
+		borderBottom: `1px solid rgba(255,255,255,0.04)`,
+	},
+	listLabel: {
+		fontSize: 10,
+		letterSpacing: '0.08em',
+		textTransform: 'uppercase',
+		color: theme.palette.primary.main,
+		marginBottom: 2,
+	},
+	listValue: {
+		fontSize: 13,
+		color: 'rgba(255,255,255,0.85)',
+		fontWeight: 500,
 	},
 	field: {
-		marginTop: 20,
+		marginTop: 16,
 	},
 	hoverable: {
-		transition: 'filter ease-in 0.15s',
-		'&:hover': {
-			filter: 'brightness(0.7)',
-			cursor: 'pointer',
-		},
+		transition: 'opacity ease-in 0.15s',
+		cursor: 'pointer',
+		'&:hover': { opacity: 0.65 },
 	},
 	editorField: {
 		marginBottom: 10,
@@ -280,63 +298,29 @@ export default ({ selectedJob, officer, onUpdate }) => {
 							alt={officer.First}
 							onClick={canEdit ? () => setPicture(true) : null}
 						/>
-						<List>
-							<ListItem>
-								<ListItemText
-									primary="State ID"
-									secondary={officer.SID}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Name"
-									secondary={`${officer.First} ${officer.Last}`}
-								/>
-							</ListItem>
-							{(myJob.Id === 'police' || (myJob.Id === 'ems' && myJob.Workplace?.Id === 'safd')) && <ListItem>
-								<ListItemText
-									onClick={
-										canEdit
-											? () => setCallsign(true)
-											: null
-									}
-									className={
-										canEdit ? classes.hoverable : ''
-									}
-									primary="Callsign"
-									secondary={
-										Boolean(officer.Callsign)
-											? officer.Callsign
-											: 'Not Set'
-									}
-								/>
-							</ListItem>}
-							<ListItem>
-								<ListItemText
-									primary="Phone Number"
-									secondary={officer.Phone}
-								/>
-							</ListItem>
-							{officer?.LastClockOn?.[myJob.Id] && <ListItem>
-								<ListItemText
-									primary="Last Clocked On"
-									secondary={`${myJob.Name}: ${moment(officer?.LastClockOn?.[myJob.Id] * 1000).format('LLL')} (${moment(officer?.LastClockOn?.[myJob.Id] * 1000).fromNow()})`}
-								/>
-							</ListItem>}
-							{officer?.TimeClockedOn?.[myJob.Id] && <ListItem>
-								<ListItemText
-									primary="Time Worked in the Last Week"
-									secondary={`${myJob.Name}: ${parseDutyTime(officer.TimeClockedOn, myJob.Id)}`}
-								/>
-							</ListItem>}
+						<List disablePadding>
+							{[{label:'State ID',value:officer.SID},{label:'Name',value:`${officer.First} ${officer.Last}`},{label:'Phone',value:officer.Phone}].map(({label,value})=>(
+								<ListItem key={label} className={classes.listItem}><div><div className={classes.listLabel}>{label}</div><div className={classes.listValue}>{value}</div></div></ListItem>
+							))}
+							{(myJob.Id === 'police' || (myJob.Id === 'ems' && myJob.Workplace?.Id === 'safd')) && (
+								<ListItem className={`${classes.listItem}${canEdit ? ' ' + classes.hoverable : ''}`} onClick={canEdit ? () => setCallsign(true) : null}>
+									<div><div className={classes.listLabel}>Callsign {canEdit && <span style={{color:'rgba(255,255,255,0.3)',fontSize:9}}>· click to edit</span>}</div><div className={classes.listValue}>{Boolean(officer.Callsign) ? officer.Callsign : 'Not Set'}</div></div>
+								</ListItem>
+							)}
+							{officer?.LastClockOn?.[myJob.Id] && (
+								<ListItem className={classes.listItem}><div><div className={classes.listLabel}>Last Clocked On</div><div className={classes.listValue}>{moment(officer?.LastClockOn?.[myJob.Id] * 1000).format('LLL')} ({moment(officer?.LastClockOn?.[myJob.Id] * 1000).fromNow()})</div></div></ListItem>
+							)}
+							{officer?.TimeClockedOn?.[myJob.Id] && (
+								<ListItem className={classes.listItem}><div><div className={classes.listLabel}>Time Worked (Last Week)</div><div className={classes.listValue}>{parseDutyTime(officer.TimeClockedOn, myJob.Id)}</div></div></ListItem>
+							)}
 						</List>
 					</div>
 				</Grid>
 				<Grid item xs={6}>
 					<div className={classes.inner} style={{ marginLeft: 10 }}>
-						<List>
+						<List disablePadding>
 							{(officer.SID != user.SID && !officer.MDTSystemAdmin) && (
-								<ListItem>
+								<ListItem className={classes.listItem}>
 									<ButtonGroup fullWidth>
 										{canPromote && <Button onClick={() => setJobEdit(true)}>
 											Edit
@@ -354,51 +338,23 @@ export default ({ selectedJob, officer, onUpdate }) => {
 								</ListItem>
 							)}
 							{(officer.SID == user.SID && isHighCommand) && (
-								<ListItem>
+								<ListItem className={classes.listItem}>
 									<ButtonGroup fullWidth>
-										{isHighCommand && <Button onClick={() => setQualEdit(true)}>
-											Qualifications
-										</Button>}
-										{isHighCommand && <Button onClick={() => onPrintBadge()}>
-											Badge
-										</Button>}
+										{isHighCommand && <Button onClick={() => setQualEdit(true)}>Qualifications</Button>}
+										{isHighCommand && <Button onClick={() => onPrintBadge()}>Badge</Button>}
 									</ButtonGroup>
 								</ListItem>
 							)}
-							<ListItem>
-								<ListItemText
-									primary="Department"
-									secondary={officerGovJobData?.Workplace?.Name}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Rank"
-									secondary={officerGovJobData?.Grade?.Name}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Qualifications"
-									secondary={
-										Boolean(officer.Qualifications) && officer.Qualifications.length > 0
-										? officer.Qualifications
-											.map(q => availableQualifications[q]?.name ?? 'Unknown')
-											.join(', ')
-										: 'No Qualifications'
-									}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Permissions"
-									secondary={
-										Object.keys(jobData.Workplaces.find(w => w.Id == officerGovJobData?.Workplace?.Id)?.Grades.find(g => g.Id == officerGovJobData?.Grade.Id)?.Permissions)
-											.map(k => availablePermissions[k]?.name ?? 'Unknown')
-											.join(', ')
-									}
-								/>
-							</ListItem>
+							{[
+								{label:'Department', value: officerGovJobData?.Workplace?.Name},
+								{label:'Rank', value: officerGovJobData?.Grade?.Name},
+								{label:'Qualifications', value: Boolean(officer.Qualifications) && officer.Qualifications.length > 0 ? officer.Qualifications.map(q => availableQualifications[q]?.name ?? 'Unknown').join(', ') : 'No Qualifications'},
+								{label:'Permissions', value: Object.keys(jobData.Workplaces.find(w => w.Id == officerGovJobData?.Workplace?.Id)?.Grades.find(g => g.Id == officerGovJobData?.Grade.Id)?.Permissions).map(k => availablePermissions[k]?.name ?? 'Unknown').join(', ')},
+							].map(({label, value}) => (
+								<ListItem key={label} className={classes.listItem}>
+									<div><div className={classes.listLabel}>{label}</div><div className={classes.listValue}>{value}</div></div>
+								</ListItem>
+							))}
 						</List>
 					</div>
 				</Grid>

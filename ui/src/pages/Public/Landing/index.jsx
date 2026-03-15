@@ -6,7 +6,8 @@ import { NoticeBoard } from '../../../components';
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
-		padding: '20px 10px 20px 20px',
+		padding: '24px 20px',
+		height: '100%',
 	},
 }));
 

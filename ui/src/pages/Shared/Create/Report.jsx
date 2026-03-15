@@ -21,7 +21,8 @@ import { toast } from 'react-toastify';
 import qs from 'qs';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Lightbox from 'react-image-lightbox';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 
 import Nui from '../../../util/Nui';
 import { Loader, OfficerSearch, PersonSearch, Editor, Modal } from '../../../components';
@@ -776,12 +777,11 @@ export default (props) => {
 			</Modal>
 			{state.evidence.length > 0 && pOpen && (
 				<Lightbox
-					mainSrc={state.evidence[pIndex].value}
-					nextSrc={state.evidence[(pIndex + 1) % state.evidence.length].value}
-					prevSrc={state.evidence[(pIndex + state.evidence.length - 1) % state.evidence.length].value}
-					onCloseRequest={() => setPOpen(false)}
-					onMovePrevRequest={() => setPIndex((pIndex + state.evidence.length - 1) % state.evidence.length)}
-					onMoveNextRequest={() => setPIndex((pIndex + 1) % state.evidence.length)}
+					open={pOpen}
+					close={() => setPOpen(false)}
+					index={pIndex}
+					on={{ view: ({ index }) => setPIndex(index) }}
+					slides={state.evidence.map(e => ({ src: e.value }))}
 				/>
 			)}
 		</div>

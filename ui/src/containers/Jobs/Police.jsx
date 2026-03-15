@@ -28,6 +28,7 @@ import {
 } from '../../pages/Shared';
 
 import { Dashboard, CreateBOLO } from '../../pages/Police';
+import FleetManager from '../../pages/FleetManager';
 
 import { AdminMetrics, AdminCharges, AdminTags, AdminRoster, AdminNotice } from '../../pages/Admin';
 import Titlebar from '../../components/Titlebar';
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 		overflowX: 'hidden',
 	},
 	maxHeight: {
-		height: 'calc(100% - 86px)',
+		height: 'calc(100% - 56px)',
 	},
 	noCallsign: {
 		position: 'absolute',
@@ -106,6 +107,7 @@ export default () => {
 									<Route exact path="/sops" element={<SOPs />} />
 									<Route exact path="/comms" element={<Comms />} />
 									<Route exact path="/penal-code" element={<PenalCode />} />
+									<Route exact path="/fleet-manager" element={<FleetManager />} />
 
 									<Route path="/system" element={<AdminRoute permission={true} />}>
 										<Route index element={<AdminMetrics />} />

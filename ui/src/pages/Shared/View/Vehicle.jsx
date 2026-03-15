@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Grid, IconButton, List, ListItem, ListItemText } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@mui/styles';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { toast } from 'react-toastify';
 import Moment from 'react-moment';
 import moment from 'moment';
 import { useParams } from 'react-router';
+import qs from 'qs';
 
 import Nui from '../../../util/Nui';
 import { Loader } from '../../../components';
@@ -15,6 +16,7 @@ import VehicleFlag, { FlagTypes } from './components/VehicleFlag';
 import VehicleStrike from './components/VehicleStrike';
 import FlagForm from './components/FlagForm';
 import StrikeForm from './components/StrikeForm';
+import AssigneesForm from '../../FleetManager/components/AssigneesForm';
 
 import { VehicleTypes } from '../../../data';
 
@@ -43,7 +45,11 @@ const useStyles = makeStyles((theme) => ({
 export default ({ match }) => {
 	const classes = useStyles();
 	const params = useParams();
+	const location = useLocation();
 	const govJobs = useSelector((state) => state.data.data.governmentJobs);
+
+	const qry = qs.parse(location.search.slice(1));
+	const isFleetManage = qry['fleet-manage'] === '1';
 
 	const [adding, setAdding] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -51,6 +57,7 @@ export default ({ match }) => {
 	const [vehicle, setVehicle] = useState(null);
 
 	const [addingStrike, setAddingStrike] = useState(false);
+	const [editingAssigned, setEditingAssigned] = useState(false);
 
 	useEffect(() => {
 		const fetch = async () => {
@@ -194,6 +201,48 @@ export default ({ match }) => {
 			toast.error('Unable to Create Flag');
 		}
 		setAdding(false);
+	};
+
+	const assignDrivers = async (assigned) => {
+		setLoading(true);
+		try {
+			let res = await (
+				await Nui.send('SetAssignedDrivers', {
+					vehicle: vehicle.VIN,
+					assigned: assigned,
+				})
+			).json();
+
+			if (res) {
+				setVehicle({
+					...vehicle,
+					GovAssigned: assigned,
+				});
+			} else toast.error('Unable to Update Assigned Drivers');
+		} catch (err) {
+			console.log(err);
+			toast.error('Unable to Update Assigned Drivers');
+		}
+
+		setLoading(false);
+		setEditingAssigned(false);
+	};
+
+	const onTrackVehicle = async () => {
+		try {
+			let res = await (
+				await Nui.send('TrackFleetVehicle', {
+					vehicle: vehicle.VIN,
+				})
+			).json();
+
+			if (res) {
+				toast.success('Marked GPS Location');
+			} else toast.error('Unable to Track Vehicle');
+		} catch (err) {
+			console.log(err);
+			toast.error('Unable to Track Vehicle');
+		}
 	};
 
 	const getOrganizationType = (jobId) => {
@@ -361,11 +410,54 @@ export default ({ match }) => {
 									}
 								/>
 							</ListItem>}
+
+							{isFleetManage && (
+								<ListItem>
+									<ListItemText
+										primary={
+											<span>
+												Storage Location{' '}
+												<IconButton style={{ fontSize: 16 }} onClick={onTrackVehicle} title="Mark GPS Location">
+													<FontAwesomeIcon icon={['fas', 'location-dot']} />
+												</IconButton>
+											</span>
+										}
+										secondary={vehicle?.Storage?.Name ?? 'Unknown'}
+									/>
+								</ListItem>
+							)}
+							{isFleetManage && (
+								<ListItem>
+									<ListItemText
+										primary={
+											<span>
+												Assigned Drivers{' '}
+												<IconButton style={{ fontSize: 16 }} onClick={() => setEditingAssigned(true)}>
+													<FontAwesomeIcon icon={['fas', 'plus']} />
+												</IconButton>
+											</span>
+										}
+										secondary={
+											vehicle.GovAssigned?.length > 0
+												? vehicle.GovAssigned
+														.map((g) => `(${g.Callsign ?? 'N/A'}) ${g.First[0]}. ${g.Last}`)
+														.join(', ')
+												: 'None Assigned'
+										}
+									/>
+								</ListItem>
+							)}
 						</Grid>
 					</Grid>
 
 					<FlagForm open={adding} flagTypes={FlagTypes} onSubmit={addFlag} onClose={() => setAdding(false)} />
 					<StrikeForm open={addingStrike} onSubmit={addStrike} onClose={() => setAddingStrike(false)} />
+					<AssigneesForm
+						open={editingAssigned}
+						onSubmit={assignDrivers}
+						onClose={() => setEditingAssigned(false)}
+						existing={vehicle.GovAssigned}
+					/>
 				</>
 			) : (
 				<Alert variant="outlined" severity="error">

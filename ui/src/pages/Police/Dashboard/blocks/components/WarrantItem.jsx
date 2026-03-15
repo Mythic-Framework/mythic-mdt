@@ -10,21 +10,25 @@ import { makeStyles } from '@mui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { toast } from 'react-toastify';
 import Moment from 'react-moment';
-import Truncate from '@nosferatu500/react-truncate';
+const Truncate = ({ lines, children }) => <span style={{ display: '-webkit-box', WebkitLineClamp: lines, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>{children}</span>;
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
 		userSelect: 'none',
-		transition: 'background ease-in 0.15s',
+		borderLeft: '3px solid transparent',
+		transition: 'background ease-in 0.15s, border-color ease-in 0.15s',
 		'&:hover': {
 			cursor: 'pointer',
-			background: theme.palette.secondary.dark,
+			background: `${theme.palette.primary.main}0f`,
+			borderLeftColor: `${theme.palette.primary.main}60`,
 		},
 	},
 	time: {
-		fontSize: 14,
-		color: theme.palette.text.alt,
+		fontSize: 12,
+		color: 'rgba(255,255,255,0.35)',
+		whiteSpace: 'nowrap',
+		marginLeft: 8,
 	},
 }));
 

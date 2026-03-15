@@ -10,7 +10,6 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { HashRouter } from 'react-router-dom';
 
-import 'react-image-lightbox/style.css';
 
 import MDT from '../MDT';
 import Alerts from '../Alerts';
@@ -32,6 +31,40 @@ export default () => {
 		},
 		palette: palette,
 		components: {
+			MuiOutlinedInput: {
+				styleOverrides: {
+					root: {
+						'&:hover .MuiOutlinedInput-notchedOutline': {
+							borderColor: 'rgba(0, 201, 177, 0.5)',
+						},
+						'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+							borderColor: '#00c9b1',
+							borderWidth: 1,
+						},
+						'& input': {
+							background: 'transparent',
+							'&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active': {
+								WebkitBoxShadow: '0 0 0 100px #141414 inset !important',
+								WebkitTextFillColor: '#ffffff !important',
+								caretColor: '#ffffff',
+								transition: 'background-color 5000s ease-in-out 0s',
+							},
+						},
+					},
+					notchedOutline: {
+						borderColor: 'rgba(255, 255, 255, 0.15)',
+					},
+				},
+			},
+			MuiInputLabel: {
+				styleOverrides: {
+					root: {
+						'&.Mui-focused': {
+							color: '#00c9b1',
+						},
+					},
+				},
+			},
 			MuiTooltip: {
 				styleOverrides: {
 					tooltip: {
@@ -53,6 +86,28 @@ export default () => {
 				styleOverrides: {
 					paper: {
 						boxShadow: '0 0 25px #000',
+						background: '#151515',
+						border: '1px solid rgba(0, 201, 177, 0.2)',
+					},
+					option: {
+						fontSize: 13,
+						'&:hover': {
+							background: 'rgba(0, 201, 177, 0.1) !important',
+						},
+						'&[aria-selected="true"]': {
+							background: 'rgba(0, 201, 177, 0.15) !important',
+						},
+						'&.Mui-focused, &.Mui-focusVisible': {
+							background: 'rgba(0, 201, 177, 0.1) !important',
+						},
+					},
+					listbox: {
+						padding: '4px 0',
+						'& .MuiAutocomplete-option': {
+							'&:hover, &.Mui-focused': {
+								background: 'rgba(0, 201, 177, 0.1) !important',
+							},
+						},
 					},
 				},
 			},
@@ -81,10 +136,16 @@ export default () => {
 					'.tox-statusbar__branding': {
 						display: 'none !important',
 					},
-					'*': {
-						'&::-webkit-scrollbar': {
-							width: 6,
-						},
+					'input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active': {
+					 WebkitBoxShadow: '0 0 0 100px #141414 inset !important',
+					 WebkitTextFillColor: '#ffffff !important',
+					 caretColor: '#ffffff !important',
+					transition: 'background-color 5000s ease-in-out 0s !important',
+					},
+						'*': {
+							'&::-webkit-scrollbar': {
+								width: 6,
+							},
 						'&::-webkit-scrollbar-thumb': {
 							background: 'rgba(0, 0, 0, 0.5)',
 							transition: 'background ease-in 0.15s',

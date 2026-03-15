@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import Truncate from '@nosferatu500/react-truncate';
+const Truncate = ({ lines, children }) => <span style={{ display: '-webkit-box', WebkitLineClamp: lines, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>{children}</span>;
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { toast } from 'react-toastify';
@@ -42,29 +42,31 @@ const useStyles = makeStyles((theme) => ({
 	charge: {
 		width: '49%',
 		marginBottom: 5,
-		padding: 10,
+		padding: '10px 12px',
 		height: 70,
 		userSelect: 'none',
-		color: theme.palette.text.main,
-		background: theme.palette.secondary.main,
-		border: `1px solid ${theme.palette.border.divider}`,
-		transition: 'filter ease-in 0.15s',
+		color: 'rgba(255,255,255,0.8)',
+		background: theme.palette.secondary.dark,
+		border: `1px solid rgba(255,255,255,0.06)`,
+		borderRadius: 3,
+		transition: 'background ease-in 0.15s, border-color ease-in 0.15s',
 		'& small': {
-			fontSize: 12,
-			color: theme.palette.text.alt,
+			fontSize: 11,
+			color: 'rgba(255,255,255,0.4)',
 		},
 		'&:hover': {
-			filter: 'brightness(0.75)',
+			background: `${theme.palette.primary.main}12`,
+			borderColor: `${theme.palette.primary.main}40`,
 			cursor: 'pointer',
 		},
 		'&.type-1': {
-			borderLeft: `5px solid ${theme.palette.info.main}`,
+			borderLeft: `4px solid ${theme.palette.info.main}`,
 		},
 		'&.type-2': {
-			borderLeft: `5px solid ${theme.palette.warning.main}`,
+			borderLeft: `4px solid ${theme.palette.warning.main}`,
 		},
 		'&.type-3': {
-			borderLeft: `5px solid ${theme.palette.error.main}`,
+			borderLeft: `4px solid ${theme.palette.error.main}`,
 		},
 		'&-enter': {
 			opacity: 0,
@@ -85,22 +87,28 @@ const useStyles = makeStyles((theme) => ({
 		marginBottom: 15,
 	},
 	key: {
-		fontSize: 16,
-		color: theme.palette.text.alt,
 		display: 'inline-flex',
-		marginLeft: 10,
+		alignItems: 'center',
 		height: 'fit-content',
+		gap: 4,
 	},
 	keyTitle: {
-		fontSize: 26,
-		color: theme.palette.text.main,
-		marginRight: 16,
+		fontSize: 14,
+		fontWeight: 700,
+		letterSpacing: '0.1em',
+		textTransform: 'uppercase',
+		color: theme.palette.primary.main,
+		marginRight: 8,
 	},
 	keyItem: {
-		display: 'inline-block',
-		padding: '8px 16px',
+		display: 'inline-flex',
+		alignItems: 'center',
+		padding: '4px 10px',
+		gap: 6,
+		fontSize: 12,
+		color: 'rgba(255,255,255,0.55)',
 		'& svg': {
-			marginRight: 5,
+			fontSize: 10,
 		},
 	},
 	infractionKey: {

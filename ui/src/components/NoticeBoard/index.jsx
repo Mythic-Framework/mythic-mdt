@@ -12,25 +12,34 @@ const useStyles = makeStyles((theme) => ({
 		padding: 10,
 	},
 	block: {
-		padding: 10,
-		background: theme.palette.secondary.main,
-		border: `1px solid ${theme.palette.border.divider}`,
+		padding: '0 0 10px 0',
+		background: theme.palette.secondary.dark,
+		border: `1px solid ${theme.palette.primary.main}25`,
+		borderRadius: 4,
+		overflow: 'hidden',
 	},
 	header: {
-		borderBottom: `1px solid ${theme.palette.border.divider}`,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		padding: '10px 14px',
+		borderBottom: `1px solid ${theme.palette.primary.main}25`,
+		marginBottom: 4,
+		background: `${theme.palette.primary.main}0a`,
+	},
+	headerTitle: {
 		color: theme.palette.primary.main,
-		fontSize: 18,
-		marginBottom: 10,
-		position: 'relative',
+		fontSize: 12,
+		fontWeight: 700,
+		letterSpacing: '0.1em',
+		textTransform: 'uppercase',
 	},
 	create: {
-		float: 'right',
-		fontSize: 16,
-		height: 32,
-		width: 32,
-		position: 'absolute',
-		top: 0,
-		right: 0,
+		color: theme.palette.primary.main,
+		padding: 4,
+		'&:hover': {
+			background: `${theme.palette.primary.main}20`,
+		},
 	},
 }));
 
@@ -75,9 +84,9 @@ export default ({ boardTitle = 'Notice Board', perPage = 3 }) => {
 		<Grid item xs={12} className={classes.container}>
 			<div className={classes.block}>
 				<div className={classes.header}>
-					{boardTitle}
+					<span className={classes.headerTitle}>{boardTitle}</span>
 					{isHighCommand && (
-						<IconButton component={Link} to="create/notice" className={classes.create}>
+						<IconButton component={Link} to="create/notice" className={classes.create} size="small">
 							<FontAwesomeIcon icon={['fas', 'plus']} />
 						</IconButton>
 					)}

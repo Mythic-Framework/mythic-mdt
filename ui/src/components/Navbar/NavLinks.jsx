@@ -10,13 +10,14 @@ import { usePermissions } from '../../hooks';
 
 const useStyles = makeStyles((theme) => ({
 	mainNav: {
-		borderRight: `1px solid ${theme.palette.border.divider}`,
-		background: theme.palette.secondary.main,
+		borderRight: `1px solid ${theme.palette.primary.main}25`,
+		background: theme.palette.secondary.dark,
 		width: '100%',
 		display: 'inline-block',
 		verticalAlign: 'top',
 		height: '100%',
 		overflow: 'auto',
+		padding: '4px 0',
 		'&::-webkit-scrollbar': {
 			width: 0,
 		},

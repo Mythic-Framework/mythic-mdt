@@ -228,6 +228,16 @@ const police = [
 		exact: true,
 	},
 	{
+		name: 'fleet-manager',
+		icon: ['fas', 'car-side'],
+		label: 'Fleet Manager',
+		path: '/fleet-manager',
+		exact: true,
+		restrict: {
+			permission: 'FLEET_MANAGEMENT',
+		},
+	},
+	{
 		name: 'admin',
 		icon: ['fas', 'building-shield'],
 		label: 'High Command',

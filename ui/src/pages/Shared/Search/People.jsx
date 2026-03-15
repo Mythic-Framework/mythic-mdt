@@ -19,7 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
-		padding: '20px 10px 20px 20px',
+		padding: '20px 16px',
 		height: '100%',
 	},
 	search: {
@@ -33,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
 		height: '95%',
 		overflowY: 'auto',
 		overflowX: 'hidden',
+		'&::-webkit-scrollbar': { width: 4 },
+		'&::-webkit-scrollbar-track': { background: 'transparent' },
+		'&::-webkit-scrollbar-thumb': { background: `${theme.palette.primary.main}50`, borderRadius: 2 },
 	},
 	form: {},
 	formControl: {},

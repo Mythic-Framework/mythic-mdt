@@ -37,6 +37,9 @@ function RetrieveComponents()
 	Jobs = exports["mythic-base"]:FetchComponent("Jobs")
 	Inventory = exports["mythic-base"]:FetchComponent("Inventory")
 	Default = exports["mythic-base"]:FetchComponent("Default")
+	Vehicles = exports["mythic-base"]:FetchComponent("Vehicles")
+	Properties = exports["mythic-base"]:FetchComponent("Properties")
+	Radar = exports["mythic-base"]:FetchComponent("Radar")
 	RegisterChatCommands()
 end
 
@@ -57,6 +60,9 @@ AddEventHandler("Core:Shared:Ready", function()
 		"Jobs",
 		"Inventory",
 		"Default",
+		"Vehicles",
+		"Properties",
+		"Radar",
 	}, function(error)
 		if #error > 0 then
 			return

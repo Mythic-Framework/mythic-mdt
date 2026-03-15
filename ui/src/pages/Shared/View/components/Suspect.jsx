@@ -20,7 +20,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { toast } from 'react-toastify';
-import Truncate from '@nosferatu500/react-truncate';
+const Truncate = ({ lines, children }) => <span style={{ display: '-webkit-box', WebkitLineClamp: lines, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>{children}</span>;
 
 import Nui from '../../../../util/Nui';
 import { CurrencyFormat } from '../../../../util/Parser';
@@ -29,9 +29,9 @@ import { PleaTypes } from '../../Create/components/SuspectForm';
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
-		padding: 10,
+		padding: 0,
 		borderRadius: 4,
-		border: `1px solid ${theme.palette.border.input}`,
+		border: `1px solid ${theme.palette.primary.main}30`,
 		margin: 0,
 		marginBottom: 10,
 		display: 'inline-flex',
@@ -41,24 +41,28 @@ const useStyles = makeStyles((theme) => ({
 		position: 'relative',
 		flexDirection: 'column',
 		verticalAlign: 'top',
-		boxShadow: 'inset 0 0 14px 0 rgba(0,0,0,.3), inset 0 2px 0 rgba(0,0,0,.2)',
-		marginTop: 15,
+		overflow: 'hidden',
+		marginTop: 10,
 	},
 	title: {
-		fontSize: 18,
-		lineHeight: '48px',
+		fontSize: 14,
+		fontWeight: 600,
+		lineHeight: '44px',
+		padding: '0 12px',
+		background: `${theme.palette.primary.main}0a`,
+		borderBottom: `1px solid ${theme.palette.primary.main}25`,
 		'& small': {
 			'&::before': {
-				content: '" - "',
-				color: theme.palette.text.alt,
+				content: '" — "',
+				color: 'rgba(255,255,255,0.3)',
 			},
-			fontSize: 14,
+			fontSize: 12,
 			color: theme.palette.primary.main,
 		},
 	},
 	body: {
 		padding: 10,
-		borderTop: `1px solid ${theme.palette.border.input}`,
+		borderTop: `1px solid ${theme.palette.primary.main}15`,
 	},
 	charge: {
 		margin: 4,

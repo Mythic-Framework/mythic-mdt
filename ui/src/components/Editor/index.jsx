@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from 'mythic-ckeditor';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
