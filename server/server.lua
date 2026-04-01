@@ -40,6 +40,7 @@ function RetrieveComponents()
 	Vehicles = exports["mythic-base"]:FetchComponent("Vehicles")
 	Properties = exports["mythic-base"]:FetchComponent("Properties")
 	Radar = exports["mythic-base"]:FetchComponent("Radar")
+	Version = exports["mythic-base"]:FetchComponent("Version")
 	RegisterChatCommands()
 end
 
@@ -63,6 +64,7 @@ AddEventHandler("Core:Shared:Ready", function()
 		"Vehicles",
 		"Properties",
 		"Radar",
+		"Version",
 	}, function(error)
 		if #error > 0 then
 			return
@@ -76,6 +78,8 @@ AddEventHandler("Core:Shared:Ready", function()
 
 		Wait(2500)
 		UpdateMDTJobsData()
+
+		Version:Check('Mythic-Framework/Mythic-VersionCheckers', GetCurrentResourceName())
 	end)
 end)
 
