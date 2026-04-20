@@ -24,21 +24,27 @@ export default () => {
 	const job = useSelector((state) => state.app.govJob);
 	const palette = GetDeptPalette(job?.Workplace?.Id, theme);
 
-	const muiTheme = createTheme({
+	// Build palette first so component overrides can reference primary color
+	const baseTheme = createTheme({
 		typography: {
 			fontFamily: ['Exo'],
 			fontWeightRegular: 400,
 		},
 		palette: palette,
+	});
+
+	const primary = baseTheme.palette.primary.main;
+
+	const muiTheme = createTheme(baseTheme, {
 		components: {
 			MuiOutlinedInput: {
 				styleOverrides: {
 					root: {
 						'&:hover .MuiOutlinedInput-notchedOutline': {
-							borderColor: 'rgba(0, 201, 177, 0.5)',
+							borderColor: `${primary}80`,
 						},
 						'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-							borderColor: '#00c9b1',
+							borderColor: primary,
 							borderWidth: 1,
 						},
 						'& input': {
@@ -60,7 +66,7 @@ export default () => {
 				styleOverrides: {
 					root: {
 						'&.Mui-focused': {
-							color: '#00c9b1',
+							color: primary,
 						},
 					},
 				},
@@ -87,25 +93,25 @@ export default () => {
 					paper: {
 						boxShadow: '0 0 25px #000',
 						background: '#151515',
-						border: '1px solid rgba(0, 201, 177, 0.2)',
+						border: `1px solid ${primary}33`,
 					},
 					option: {
 						fontSize: 13,
 						'&:hover': {
-							background: 'rgba(0, 201, 177, 0.1) !important',
+							background: `${primary}1a !important`,
 						},
 						'&[aria-selected="true"]': {
-							background: 'rgba(0, 201, 177, 0.15) !important',
+							background: `${primary}26 !important`,
 						},
 						'&.Mui-focused, &.Mui-focusVisible': {
-							background: 'rgba(0, 201, 177, 0.1) !important',
+							background: `${primary}1a !important`,
 						},
 					},
 					listbox: {
 						padding: '4px 0',
 						'& .MuiAutocomplete-option': {
 							'&:hover, &.Mui-focused': {
-								background: 'rgba(0, 201, 177, 0.1) !important',
+								background: `${primary}1a !important`,
 							},
 						},
 					},
