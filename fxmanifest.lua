@@ -2,7 +2,7 @@ fx_version "cerulean"
 game "gta5"
 lua54 'yes'
 
-version '1.0.0'
+version '1.0.1'
 repository 'https://github.com/Mythic-Framework/mythic-mdt'
 
 client_script "@mythic-base/components/cl_error.lua"

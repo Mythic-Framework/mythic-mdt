@@ -232,8 +232,8 @@ export default ({ match }) => {
 		//   evidence: new Array(20).fill({
 		//     type: 'fragment',
 		//     _id: 'f',
-		//     label: 'cunt',
-		//     value: 'double cunt',
+		//     label: 'Jonny',
+		//     value: 'Potatoes are cool',
 		//   }),
 		//   evidenceCounter: 1,
 		//   time: 1621518551812,
@@ -241,8 +241,8 @@ export default ({ match }) => {
 		//   lastUpdated: {
 		//     SID: 3,
 		//     Callsign: 302,
-		//     First: 'Shit',
-		//     Last: 'Cunt',
+		//     First: 'Jonny',
+		//     Last: 'Buckets',
 		//     Time: 1628967582 * 1000,
 		//   }
 		// });
@@ -273,7 +273,7 @@ export default ({ match }) => {
 
 	const refresh = () => {
 		fetch();
-	}
+	};
 
 	return (
 		<div>
@@ -293,7 +293,7 @@ export default ({ match }) => {
 				<>
 					<Grid className={classes.wrapper} container spacing={2}>
 						<Grid item xs={12} className={classes.actionBar}>
-						<ButtonGroup variant="outlined" fullWidth>
+							<ButtonGroup variant="outlined" fullWidth>
 								<Button onClick={fetch} disabled={loading}>
 									Refresh
 								</Button>
@@ -533,11 +533,11 @@ export default ({ match }) => {
 					</Grid>
 					{report.evidence.length > 0 && pOpen && (
 						<Lightbox
-						open={pOpen}
-						close={() => setPOpen(false)}
-						index={pIndex}
-						on={{ view: ({ index }) => setPIndex(index) }}
-						slides={report.evidence.map(e => ({ src: e.value }))}
+							open={pOpen}
+							close={() => setPOpen(false)}
+							index={pIndex}
+							on={{ view: ({ index }) => setPIndex(index) }}
+							slides={report.evidence.map((e) => ({ src: e.value }))}
 						/>
 					)}
 				</>

@@ -7,69 +7,65 @@ export const initialState = {
 		// 	{
 		// 		time: 1629380840 * 1000,
 		// 		title: 'Test',
-		// 		description: 'Test Description <b>Bitch</b>'
+		// 		description: 'Test Description <b>UwU</b>'
 		// 	},
 		// 	{
 		// 		time: 1629380840 * 1000,
 		// 		title: 'Test',
-		// 		description: 'Test Description <b>Bitch</b>'
+		// 		description: 'Test Description <b>UwU</b>'
 		// 	},
 		// 	{
 		// 		time: 1629380840 * 1000,
 		// 		title: 'Test',
-		// 		description: 'Test Description <b>Bitch</b>'
+		// 		description: 'Test Description <b>UwU</b>'
 		// 	},
 		// 	{
 		// 		time: 1629380840 * 1000,
 		// 		title: 'Test',
-		// 		description: 'Test Description <b>Bitch</b>'
+		// 		description: 'Test Description <b>UwU</b>'
 		// 	},
 		// 	{
 		// 		time: 1629380840 * 1000,
 		// 		title: 'Test',
-		// 		description: 'Test Description <b>Bitch</b>'
+		// 		description: 'Test Description <b>UwU</b>'
 		// 	},
 		// 	{
 		// 		time: 1629380840 * 1000,
 		// 		title: 'Test',
-		// 		description: 'Test Description <b>Bitch</b>'
+		// 		description: 'Test Description <b>UwU</b>'
 		// 	},
 		// 	{
 		// 		time: 1629380840 * 1000,
 		// 		title: 'Test',
-		// 		description: 'Test Description <b>Bitch</b>'
+		// 		description: 'Test Description <b>UwU</b>'
 		// 	},
 		// 	{
 		// 		time: 1629380840 * 1000,
 		// 		title: 'Test',
-		// 		description: 'Test Description <b>Bitchface</b>'
+		// 		description: 'Test Description <b>UwUface</b>'
 		// 	},
 		// ],
 		permissions: {
-			'MDT_TEST_PERMISSION': {
+			MDT_TEST_PERMISSION: {
 				name: 'Test Permission',
 				restrict: {
 					job: 'police',
 					workplace: false,
-				}
-			}
+				},
+			},
 		},
 		qualifications: [],
-		governmentJobs: [
-			'government',
-			'police',
-			'ems',
-		],
+		governmentJobs: ['government', 'police', 'ems'],
 		tags: [
 			{
 				_id: 1,
 				name: 'Test Tag',
 				restrictViewing: true,
 				requiredPermission: 'f',
-			}
+			},
 		],
 		governmentJobsData: {
-			'police': {
+			police: {
 				Id: 'police',
 				Name: 'Police',
 				Workplaces: [
@@ -342,7 +338,7 @@ export const initialState = {
 					},
 				],
 			},
-			'government': JSON.parse(`{
+			government: JSON.parse(`{
 				"Workplaces": [
 				  {
 					"Grades": [
@@ -415,14 +411,13 @@ export const initialState = {
 				"Type": "Government",
 				"Name": "Government",
 				"Id": "government"
-			}`)
+			}`),
 		},
 		charges: [
 			{
 				_id: 1,
 				title: 'Attempted Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 1,
 				fine: 1000,
 				jail: 25,
@@ -431,8 +426,7 @@ export const initialState = {
 			{
 				_id: 2,
 				title: 'Attempted Murder of a Peace Officer',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 2,
 				fine: 20000,
 				jail: 200,
@@ -440,8 +434,7 @@ export const initialState = {
 			{
 				_id: 3,
 				title: 'Attempted Murder of a Government Official',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 3,
 				fine: 20000,
 				jail: 200,
@@ -449,8 +442,7 @@ export const initialState = {
 			{
 				_id: 4,
 				title: 'First Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 1,
 				fine: 20000,
 				jail: 200,
@@ -458,8 +450,7 @@ export const initialState = {
 			{
 				_id: 5,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 2,
 				fine: 20000,
 				jail: 200,
@@ -467,8 +458,7 @@ export const initialState = {
 			{
 				_id: 6,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 3,
 				fine: 20000,
 				jail: 200,
@@ -476,8 +466,7 @@ export const initialState = {
 			{
 				_id: 7,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 1,
 				fine: 20000,
 				jail: 200,
@@ -485,8 +474,7 @@ export const initialState = {
 			{
 				_id: 8,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 2,
 				fine: 20000,
 				jail: 200,
@@ -494,8 +482,7 @@ export const initialState = {
 			{
 				_id: 9,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 3,
 				fine: 20000,
 				jail: 200,
@@ -503,8 +490,7 @@ export const initialState = {
 			{
 				_id: 10,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 1,
 				fine: 20000,
 				jail: 200,
@@ -512,8 +498,7 @@ export const initialState = {
 			{
 				_id: 11,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 2,
 				fine: 20000,
 				jail: 200,
@@ -521,8 +506,7 @@ export const initialState = {
 			{
 				_id: 12,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 3,
 				fine: 20000,
 				jail: 200,
@@ -530,8 +514,7 @@ export const initialState = {
 			{
 				_id: 13,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 1,
 				fine: 20000,
 				jail: 200,
@@ -539,8 +522,7 @@ export const initialState = {
 			{
 				_id: 14,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 2,
 				fine: 20000,
 				jail: 200,
@@ -548,8 +530,7 @@ export const initialState = {
 			{
 				_id: 15,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 3,
 				fine: 20000,
 				jail: 200,
@@ -557,8 +538,7 @@ export const initialState = {
 			{
 				_id: 16,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 1,
 				fine: 20000,
 				jail: 200,
@@ -566,8 +546,7 @@ export const initialState = {
 			{
 				_id: 17,
 				title: 'Second Degree Murder',
-				description:
-					'This is something that should describe what the charge is',
+				description: 'This is something that should describe what the charge is',
 				type: 2,
 				fine: 20000,
 				jail: 200,
@@ -585,7 +564,7 @@ export const initialState = {
 		// 	},
 		// 	{
 		// 		_id: 2,
-		// 		name: 'Stupid Man',
+		// 		name: 'Van Man',
 		// 		requiredPermission: 'MDT_TEST_PERMISSION',
 		// 		style: {
 		// 			backgroundColor: '#1eadd9',
@@ -593,7 +572,7 @@ export const initialState = {
 		// 	},
 		// 	{
 		// 		_id: 3,
-		// 		name: 'Stupid Fuck',
+		// 		name: 'Bill Bob',
 		// 		requiredPermission: false,
 		// 		style: {
 		// 			backgroundColor: '#1eadd9',
@@ -601,7 +580,7 @@ export const initialState = {
 		// 	},
 		// 	{
 		// 		_id: 60,
-		// 		name: 'Stupid Fuck',
+		// 		name: 'Bill Bob',
 		// 		requiredPermission: false,
 		// 		style: {
 		// 			backgroundColor: '#1eadd9',
@@ -609,7 +588,7 @@ export const initialState = {
 		// 	},
 		// 	{
 		// 		_id: 4,
-		// 		name: 'Stupid Fuck',
+		// 		name: 'Bill Bob',
 		// 		requiredPermission: false,
 		// 		style: {
 		// 			backgroundColor: '#1eadd9',
@@ -617,7 +596,7 @@ export const initialState = {
 		// 	},
 		// 	{
 		// 		_id: 5,
-		// 		name: 'Stupid Fuck',
+		// 		name: 'Bill Bob',
 		// 		requiredPermission: false,
 		// 		style: {
 		// 			backgroundColor: '#1eadd9',
@@ -625,7 +604,7 @@ export const initialState = {
 		// 	},
 		// 	{
 		// 		_id: 6,
-		// 		name: 'Stupid Fuck',
+		// 		name: 'Bill Bob',
 		// 		requiredPermission: false,
 		// 		style: {
 		// 			backgroundColor: '#1eadd9',
@@ -633,7 +612,7 @@ export const initialState = {
 		// 	},
 		// 	{
 		// 		_id: 7,
-		// 		name: 'Stupid Fuck',
+		// 		name: 'Bill Bob',
 		// 		requiredPermission: false,
 		// 		style: {
 		// 			backgroundColor: '#1eadd9',
@@ -785,28 +764,19 @@ export default (state = initialState, action) => {
 					...state.data,
 					[action.payload.type]:
 						state.data[action.payload.type] != null
-							? Object.prototype.toString.call(
-									state.data[action.payload.type],
-							  ) == '[object Array]'
+							? Object.prototype.toString.call(state.data[action.payload.type]) == '[object Array]'
 								? action.payload.first
-									? [
-											action.payload.data,
-											...state.data[action.payload.type],
-									  ]
-									: [
-											...state.data[action.payload.type],
-											action.payload.data,
-									  ]
+									? [action.payload.data, ...state.data[action.payload.type]]
+									: [...state.data[action.payload.type], action.payload.data]
 								: action.payload.key
-								? {
-										...state.data[action.payload.type],
-										[action.payload.key]:
-											action.payload.data,
-								  }
-								: {
-										...state.data[action.payload.type],
-										...action.payload.data,
-								  }
+									? {
+											...state.data[action.payload.type],
+											[action.payload.key]: action.payload.data,
+										}
+									: {
+											...state.data[action.payload.type],
+											...action.payload.data,
+										}
 							: [action.payload.data],
 				},
 			};
@@ -816,31 +786,22 @@ export default (state = initialState, action) => {
 				data: {
 					...state.data,
 					[action.payload.type]:
-						Object.prototype.toString.call(
-							state.data[action.payload.type],
-						) == '[object Array]'
+						Object.prototype.toString.call(state.data[action.payload.type]) == '[object Array]'
 							? state.data[action.payload.type].map((data) =>
-									data._id == action.payload.id
-										? { ...action.payload.data }
-										: data,
-							  )
-							: (state.data[action.payload.type] = action.payload
-									.key
+									data._id == action.payload.id ? { ...action.payload.data } : data,
+								)
+							: (state.data[action.payload.type] = action.payload.key
 									? {
 											...state.data[action.payload.type],
 											[action.payload.id]: {
-												...state.data[
-													action.payload.type
-												][action.payload.id],
-												[action.payload.key]:
-													action.payload.data,
+												...state.data[action.payload.type][action.payload.id],
+												[action.payload.key]: action.payload.data,
 											},
-									  }
+										}
 									: {
 											...state.data[action.payload.type],
-											[action.payload.id]:
-												action.payload.data,
-									  }),
+											[action.payload.id]: action.payload.data,
+										}),
 				},
 			};
 		case 'REMOVE_DATA':
@@ -849,30 +810,23 @@ export default (state = initialState, action) => {
 				data: {
 					...state.data,
 					[action.payload.type]:
-						Object.prototype.toString.call(
-							state.data[action.payload.type],
-						) == '[object Array]'
+						Object.prototype.toString.call(state.data[action.payload.type]) == '[object Array]'
 							? state.data[action.payload.type].filter((data) => {
-									return Object.prototype.toString.call(
-										data,
-									) == '[object Object]'
+									return Object.prototype.toString.call(data) == '[object Object]'
 										? action.payload.key
-											? data[action.payload.key] !=
-											  action.payload.id
+											? data[action.payload.key] != action.payload.id
 											: data._id != action.payload.id
 										: data != action.payload.id;
-							  })
-							: (state.data[action.payload.type] = Object.keys(
-									state.data[action.payload.type],
-							  ).reduce((result, key) => {
-									if (key != action.payload.id) {
-										result[key] =
-											state.data[action.payload.type][
-												key
-											];
-									}
-									return result;
-							  }, {})),
+								})
+							: (state.data[action.payload.type] = Object.keys(state.data[action.payload.type]).reduce(
+									(result, key) => {
+										if (key != action.payload.id) {
+											result[key] = state.data[action.payload.type][key];
+										}
+										return result;
+									},
+									{},
+								)),
 				},
 			};
 		case 'LOGOUT':

@@ -136,13 +136,13 @@ export const initialState = {
 		},
 		{
 			Callsign: 122,
-			First: 'Fuck',
+			First: 'John',
 			Last: 'Cena',
 			SID: 3,
 		},
 		{
 			//Callsign: 122,
-			First: 'Fuck',
+			First: 'John',
 			Last: 'Cena',
 			SID: 3,
 		},
