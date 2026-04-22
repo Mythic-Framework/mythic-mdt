@@ -1,205 +1,103 @@
 _MDT.Vehicles = {
 	Search = function(self, term)
-		local p = promise.new()
-		Database.Game:find({
-			collection = "vehicles",
-			query = {
-				["$or"] = {
-					{
-						['Owner.Type'] = 0,
-						['$expr'] = {
-							['$regexMatch'] = {
-								input = {
-									['$toString'] = '$Owner.Id'
-								},
-								regex = term,
-								options = "i",
-							}
-						}
-					},
-					{
-						VIN = {
-							['$regex'] = term,
-							['$options'] = "i",
-						}
-					},
-					{
-						RegisteredPlate = {
-							["$regex"] = term,
-							["$options"] = "i",
-						},
-					},
-					{
-						["$expr"] = {
-							["$regexMatch"] = {
-								input = {
-									["$concat"] = { "$Make", " ", "$Model" },
-								},
-								regex = term,
-								options = "i",
-							},
-						},
-					},
-				},
-			},
-			options = {
-				limit = 24,
-			},
-		}, function(success, results)
-			if not success then
-				p:resolve(false)
-				return
-			end
-			p:resolve(results)
-		end)
+		local results = Database:Find('vehicles', {
+			RegisteredPlate = Database.LIKE(term),
+		}, { limit = 24 })
+
 		GlobalState['MDT:Metric:Search'] = GlobalState['MDT:Metric:Search'] + 1
-		return Citizen.Await(p)
+		return results or false
 	end,
 	View = function(self, VIN)
-		local p = promise.new()
-		Database.Game:findOne({
-			collection = "vehicles",
-			query = {
-				VIN = VIN,
-			},
-		}, function(success, results)
-			if not success or #results <= 0 then
-				p:resolve(false)
-				return
-			end
-			local vehicle = results[1]
+		local vehicle = Database:FindOne('vehicles', { VIN = VIN })
+		if not vehicle then
+			return false
+		end
 
-			if vehicle.Owner then
-				if vehicle.Owner.Type == 0 then
-					vehicle.Owner.Person = MDT.People:View(vehicle.Owner.Id)
-				elseif vehicle.Owner.Type == 1 or vehicle.Owner.Type == 2 then
-					local jobData = Jobs:DoesExist(vehicle.Owner.Id, vehicle.Owner.Workplace)
-					if jobData then
-						if jobData.Workplace then
-							vehicle.Owner.JobName = string.format('%s (%s)', jobData.Name, jobData.Workplace.Name)
-						else
-							vehicle.Owner.JobName = jobData.Name
-						end
+		if vehicle.Owner then
+			if vehicle.Owner.Type == 0 then
+				vehicle.Owner.Person = MDT.People:View(vehicle.Owner.Id)
+			elseif vehicle.Owner.Type == 1 or vehicle.Owner.Type == 2 then
+				local jobData = Jobs:DoesExist(vehicle.Owner.Id, vehicle.Owner.Workplace)
+				if jobData then
+					if jobData.Workplace then
+						vehicle.Owner.JobName = string.format('%s (%s)', jobData.Name, jobData.Workplace.Name)
+					else
+						vehicle.Owner.JobName = jobData.Name
 					end
 				end
-
-				if vehicle.Owner.Type == 2 then
-					vehicle.Owner.JobName = vehicle.Owner.JobName .. " (Dealership Buyback)"
-				end
 			end
 
-			-- Resolve storage location name
-			if vehicle.Storage then
-				if vehicle.Storage.Type == 0 then
-					vehicle.Storage.Name = Vehicles.Garages:Impound().name
-				elseif vehicle.Storage.Type == 1 then
-					local garage = Vehicles.Garages:Get(vehicle.Storage.Id)
-					vehicle.Storage.Name = garage and garage.name or "Unknown Garage"
-				elseif vehicle.Storage.Type == 2 then
-					local prop = Properties:Get(vehicle.Storage.Id)
-					vehicle.Storage.Name = prop and prop.label or "Unknown Property"
-				end
+			if vehicle.Owner.Type == 2 then
+				vehicle.Owner.JobName = vehicle.Owner.JobName .. " (Dealership Buyback)"
 			end
+		end
 
-			-- Check radar flags
-			if vehicle.RegisteredPlate then
-				local flagged = Radar:CheckPlate(vehicle.RegisteredPlate)
-				if flagged and flagged ~= "Vehicle Flagged in MDT" then
-					vehicle.RadarFlag = flagged
-				end
+		if vehicle.Storage then
+			if vehicle.Storage.Type == 0 then
+				vehicle.Storage.Name = Vehicles.Garages:Impound().name
+			elseif vehicle.Storage.Type == 1 then
+				local garage = Vehicles.Garages:Get(vehicle.Storage.Id)
+				vehicle.Storage.Name = garage and garage.name or "Unknown Garage"
+			elseif vehicle.Storage.Type == 2 then
+				local prop = Properties:Get(vehicle.Storage.Id)
+				vehicle.Storage.Name = prop and prop.label or "Unknown Property"
 			end
+		end
 
-			p:resolve(vehicle)
-		end)
-		return Citizen.Await(p)
+		if vehicle.RegisteredPlate then
+			local flagged = Radar:CheckPlate(vehicle.RegisteredPlate)
+			if flagged and flagged ~= "Vehicle Flagged in MDT" then
+				vehicle.RadarFlag = flagged
+			end
+		end
+
+		return vehicle
 	end,
 	Flags = {
 		Add = function(self, VIN, data, plate)
-			local p = promise.new()
-			Database.Game:updateOne({
-				collection = "vehicles",
-				query = {
-					VIN = VIN,
-				},
-				update = {
-					["$push"] = {
-						Flags = data,
-					},
-				},
-			}, function(success, result)
-				if success and data.radarFlag and plate then
-					Radar:AddFlaggedPlate(plate, 'Vehicle Flagged in MDT')
-				end
-				p:resolve(success)
-			end)
-			return Citizen.Await(p)
+			local existing = Database:FindOne('vehicles', { VIN = VIN })
+			if not existing then
+				return false
+			end
+			local flags = existing.Flags or {}
+			table.insert(flags, data)
+			local affected = Database:Update('vehicles', { VIN = VIN }, { Flags = flags })
+			local success = affected and affected > 0
+			if success and data.radarFlag and plate then
+				Radar:AddFlaggedPlate(plate, 'Vehicle Flagged in MDT')
+			end
+			return success
 		end,
 		Remove = function(self, VIN, flag)
-			local p = promise.new()
-			Database.Game:updateOne({
-				collection = "vehicles",
-				query = {
-					VIN = VIN,
-				},
-				update = {
-					["$pull"] = {
-						Flags = {
-							Type = flag
-						},
-					},
-				},
-			}, function(success, result)
-				p:resolve(success)
-			end)
-			return Citizen.Await(p)
+			local existing = Database:FindOne('vehicles', { VIN = VIN })
+			if not existing then
+				return false
+			end
+			local flags = existing.Flags or {}
+			for k, v in ipairs(flags) do
+				if v.Type == flag then
+					table.remove(flags, k)
+					break
+				end
+			end
+			local affected = Database:Update('vehicles', { VIN = VIN }, { Flags = flags })
+			return affected and affected > 0
 		end,
 	},
 	UpdateStrikes = function(self, VIN, strikes)
-		local p = promise.new()
-		Database.Game:updateOne({
-			collection = "vehicles",
-			query = {
-				VIN = VIN,
-			},
-			update = {
-				["$set"] = {
-					Strikes = strikes,
-				},
-			},
-		}, function(success, result)
-			p:resolve(success)
-		end)
-		return Citizen.Await(p)
+		local affected = Database:Update('vehicles', { VIN = VIN }, { Strikes = strikes })
+		return affected and affected > 0
 	end,
 	GetStrikes = function(self, VIN)
-		local p = promise.new()
-		Database.Game:findOne({
-			collection = "vehicles",
-			query = {
-				VIN = VIN,
-			},
-			options = {
-				projection = {
-					VIN = 1,
-					Strikes = 1,
-					RegisteredPlate = 1,
-				}
-			}
-		}, function(success, results)
-			if success then
-				local veh = results[1]
-				local strikes = 0
-				if veh and veh.Strikes and #veh.Strikes > 0 then
-					strikes = #veh.Strikes
-				end
-
-				p:resolve(strikes)
-			else
-				p:resolve(0)
+		local veh = Database:FindOne('vehicles', { VIN = VIN })
+		if veh then
+			local strikes = 0
+			if veh.Strikes and #veh.Strikes > 0 then
+				strikes = #veh.Strikes
 			end
-		end)
-
-		return Citizen.Await(p)
+			return strikes
+		end
+		return 0
 	end
 }
 

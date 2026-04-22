@@ -23,324 +23,193 @@ local requiredCharacterData = {
 _MDT.People = {
 	Search = {
 		People = function(self, term)
-			local p = promise.new()
-			Database.Game:find({
-				collection = "characters",
-				query = {
-					["$and"] = {
-						{
-							["$or"] = {
-								{
-									["$expr"] = {
-										["$regexMatch"] = {
-											input = {
-												["$concat"] = { "$First", " ", "$Last" },
-											},
-											regex = term,
-											options = "i",
-										},
-									},
-								},
-								{
-									["$expr"] = {
-										["$regexMatch"] = {
-											input = {
-												["$toString"] = "$SID",
-											},
-											regex = term,
-											options = "i",
-										},
-									},
-								},
-							},
-						},
-						{
-							["$or"] = {
-								{ Deleted = false },
-								{ Deleted = {
-									["$exists"] = false,
-								} },
-							},
-						},
-					},
-				},
-				options = {
-					projection = requiredCharacterData,
-					limit = 12,
-				},
-			}, function(success, results)
-				if not success then
-					p:resolve(false)
-					return
-				end
-				p:resolve(results)
-			end)
-			GlobalState["MDT:Metric:Search"] = GlobalState["MDT:Metric:Search"] + 1
-			return Citizen.Await(p)
-		end,
-		Government = function(self)
-			local p = promise.new()
-			Database.Game:find({
-				collection = "characters",
-				query = {
-					Jobs = {
-						["$elemMatch"] = {
-							Id = {
-								["$in"] = _governmentJobs,
-							},
-						},
-					},
-				},
-				options = {
-					projection = requiredCharacterData,
-				},
-			}, function(success, results)
-				if not success then
-					p:resolve(false)
-					return
-				end
-				p:resolve(results)
-			end)
-			return Citizen.Await(p)
-		end,
-		NotGovernment = function(self)
-			local p = promise.new()
-			Database.Game:find({
-				collection = "characters",
-				query = {
-					Jobs = {
-						["$not"] = {
-							["$elemMatch"] = {
-								Id = {
-									["$in"] = _governmentJobs,
-								},
-							},
-						},
-					},
-				},
-				options = {
-					projection = requiredCharacterData,
-				},
-			}, function(success, results)
-				if not success then
-					p:resolve(false)
-					return
-				end
-				p:resolve(results)
-			end)
-			return Citizen.Await(p)
-		end,
-		Job = function(self, job, term)
-			local p = promise.new()
+			local results = Database:Find('characters', {
+				_search = term,
+				Deleted = Database.NE(true),
+			}, { limit = 12 })
 
-			local qry = {
-				Jobs = {
-					["$elemMatch"] = {
-						Id = job,
-					},
-				},
-			}
-
-			if term then
-				qry = {
-					["$and"] = {
-						{
-							["$or"] = {
-								{
-									["$expr"] = {
-										["$regexMatch"] = {
-											input = {
-												["$concat"] = { "$First", " ", "$Last" },
-											},
-											regex = term,
-											options = "i",
-										},
-									},
-								},
-								{
-									["$expr"] = {
-										["$regexMatch"] = {
-											input = {
-												["$toString"] = "$SID",
-											},
-											regex = term,
-											options = "i",
-										},
-									},
-								},
-							},
-						},
-						{
-							Jobs = {
-								["$elemMatch"] = {
-									Id = job,
-								},
-							},
-						},
-					},
-				}
+			if not results then
+				return false
 			end
 
-			Database.Game:find({
-				collection = "characters",
-				query = qry,
-				options = {
-					projection = requiredCharacterData,
-					limit = term and 12 or nil,
-				},
-			}, function(success, results)
-				if not success then
-					p:resolve(false)
-					return
+			if term and #term > 0 then
+				local lterm = term:lower()
+				local filtered = {}
+				for k, v in ipairs(results) do
+					local fullName = ((v.First or '') .. ' ' .. (v.Last or '')):lower()
+					if fullName:find(lterm, 1, true) or tostring(v.SID or ''):find(lterm, 1, true) then
+						table.insert(filtered, v)
+					end
 				end
-				p:resolve(results)
-			end)
-			return Citizen.Await(p)
+				results = filtered
+			end
+
+			GlobalState["MDT:Metric:Search"] = GlobalState["MDT:Metric:Search"] + 1
+			return results
+		end,
+		Government = function(self)
+			local govSet = {}
+			for _, j in ipairs(_governmentJobs) do govSet[j] = true end
+			local all = Database:Find('characters', { Deleted = Database.NE(true) })
+			if not all then return false end
+			local filtered = {}
+			for _, c in ipairs(all) do
+				if c.Jobs then
+					for _, j in ipairs(c.Jobs) do
+						if govSet[j.Id] then
+							table.insert(filtered, c)
+							break
+						end
+					end
+				end
+			end
+			return #filtered > 0 and filtered or false
+		end,
+		NotGovernment = function(self)
+			local govSet = {}
+			for _, j in ipairs(_governmentJobs) do govSet[j] = true end
+			local all = Database:Find('characters', { Deleted = Database.NE(true) })
+			if not all then return false end
+			local filtered = {}
+			for _, c in ipairs(all) do
+				local hasGov = false
+				if c.Jobs then
+					for _, j in ipairs(c.Jobs) do
+						if govSet[j.Id] then hasGov = true break end
+					end
+				end
+				if not hasGov then table.insert(filtered, c) end
+			end
+			return #filtered > 0 and filtered or false
+		end,
+		Job = function(self, job, term)
+			local all = Database:Find('characters', { Deleted = Database.NE(true) })
+			if not all then return false end
+			local lterm = term and #term > 0 and term:lower() or nil
+			local filtered = {}
+			for _, c in ipairs(all) do
+				local hasJob = false
+				if c.Jobs then
+					for _, j in ipairs(c.Jobs) do
+						if j.Id == job then hasJob = true break end
+					end
+				end
+				if hasJob then
+					if lterm then
+						local fullName = ((c.First or '') .. ' ' .. (c.Last or '')):lower()
+						if fullName:find(lterm, 1, true) or tostring(c.SID or ''):find(lterm, 1, true) then
+							table.insert(filtered, c)
+						end
+					else
+						table.insert(filtered, c)
+					end
+				end
+			end
+			return #filtered > 0 and filtered or false
 		end,
 		NotJob = function(self, job)
-			local p = promise.new()
-			Database.Game:find({
-				collection = "characters",
-				query = {
-					Jobs = {
-						["$not"] = {
-							["$elemMatch"] = {
-								Id = job,
-							},
-						},
-					},
-				},
-				options = {
-					projection = requiredCharacterData,
-				},
-			}, function(success, results)
-				if not success then
-					p:resolve(false)
-					return
+			local all = Database:Find('characters', { Deleted = Database.NE(true) })
+			if not all then return false end
+			local filtered = {}
+			for _, c in ipairs(all) do
+				local hasJob = false
+				if c.Jobs then
+					for _, j in ipairs(c.Jobs) do
+						if j.Id == job then hasJob = true break end
+					end
 				end
-				p:resolve(results)
-			end)
-			return Citizen.Await(p)
+				if not hasJob then table.insert(filtered, c) end
+			end
+			return #filtered > 0 and filtered or false
 		end,
 	},
 	View = function(self, id, requireAllData)
 		local SID = tonumber(id)
-		local p = promise.new()
-		Database.Game:findOne({
-			collection = "characters",
-			query = {
-				SID = SID,
-			},
-			options = {
-				projection = requiredCharacterData,
-			},
-		}, function(success, character)
-			if not success or #character < 0 then
-				p:resolve(false)
-				return
-			end
+		local character = Database:FindOne('characters', { SID = SID })
+		if not character then
+			return false
+		end
 
-			if requireAllData then
-				Database.Game:findOne({
-					collection = "character_convictions",
-					query = {
-						SID = SID,
-					},
-				}, function(success2, convictions)
-					if not success2 then
-						p:resolve(false)
-						return
+		if requireAllData then
+			local convictions = Database:FindOne('character_convictions', { SID = SID })
+			local allVehicles = Database:Find('vehicles', { OwnerType = 0 })
+			local vehicles = {}
+			if allVehicles then
+				for _, v in ipairs(allVehicles) do
+					if v.Owner and tostring(v.Owner.Id) == tostring(SID) then
+						table.insert(vehicles, v)
 					end
-
-					Database.Game:find({
-						collection = "vehicles",
-						query = {
-							["Owner.Type"] = 0,
-							["Owner.Id"] = SID,
-						},
-					}, function(success, vehicles)
-						if not success2 then
-							p:resolve(false)
-							return
-						end
-						local char = character[1]
-						local ownedBusinesses = {}
-
-						if char.Jobs then
-							for k, v in ipairs(char.Jobs) do
-								local jobData = Jobs:Get(v.Id)
-								if jobData.Owner and jobData.Owner == char.SID then
-									table.insert(ownedBusinesses, v.Id)
-								end
-							end
-						end
-
-						p:resolve({
-							data = char,
-							convictions = convictions[1],
-							vehicles = vehicles,
-							ownedBusinesses = ownedBusinesses,
-						})
-					end)
-				end)
-			else
-				p:resolve(character[1])
+				end
 			end
-		end)
-		return Citizen.Await(p)
+
+			if not vehicles then
+				vehicles = {}
+			end
+
+			local ownedBusinesses = {}
+
+			if character.Jobs then
+				for k, v in ipairs(character.Jobs) do
+					local jobData = Jobs:Get(v.Id)
+					if jobData.Owner and jobData.Owner == character.SID then
+						table.insert(ownedBusinesses, v.Id)
+					end
+				end
+			end
+
+			return {
+				data = character,
+				convictions = convictions,
+				vehicles = vehicles,
+				ownedBusinesses = ownedBusinesses,
+			}
+		else
+			return character
+		end
 	end,
 	Update = function(self, requester, id, key, value)
-		local p = promise.new()
 		local logVal = value
 		if type(value) == "table" then
 			logVal = json.encode(value)
 		end
 
-		local update = {
-			["$set"] = {
-				[key] = value,
-			},
-		}
+		local existing = Database:FindOne('characters', { SID = id })
+		local rawHistory = existing and existing.MDTHistory
+		local history = type(rawHistory) == 'table' and rawHistory or {}
 
 		if requester == -1 then
-			update["$push"] = {
-				MDTHistory = {
-					Time = (os.time() * 1000),
-					Char = -1,
-					Log = string.format("System Updated Profile, Set %s To %s", key, logVal),
-				},
-			}
+			table.insert(history, {
+				Time = (os.time() * 1000),
+				Char = -1,
+				Log = string.format("System Updated Profile, Set %s To %s", key, logVal),
+			})
 		else
-			update["$push"] = {
-				MDTHistory = {
-					Time = (os.time() * 1000),
-					Char = requester:GetData("SID"),
-					Log = string.format(
-						"%s Updated Profile, Set %s To %s",
-						requester:GetData("First") .. " " .. requester:GetData("Last"),
-						key,
-						logVal
-					),
-				},
-			}
+			table.insert(history, {
+				Time = (os.time() * 1000),
+				Char = requester:GetData("SID"),
+				Log = string.format(
+					"%s Updated Profile, Set %s To %s",
+					requester:GetData("First") .. " " .. requester:GetData("Last"),
+					key,
+					logVal
+				),
+			})
 		end
 
-		Database.Game:updateOne({
-			collection = "characters",
-			query = {
-				SID = id,
-			},
-			update = update,
-		}, function(success, results)
-			if success then
-				local target = Fetch:SID(id)
-				if target then
-					target:GetData("Character"):SetData(key, value)
-				end
+		local updateFields = {
+			[key] = value,
+			MDTHistory = history,
+		}
+
+		local affected = Database:Update('characters', { SID = id }, updateFields)
+		if affected and affected > 0 then
+			local target = Fetch:SID(id)
+			if target then
+				target:GetData("Character"):SetData(key, value)
 			end
-			p:resolve(success)
-		end)
-		return Citizen.Await(p)
+			return true
+		end
+		return false
 	end,
 }
 
@@ -396,14 +265,8 @@ AddEventHandler("MDT:Server:RegisterCallbacks", function()
 
 	Callbacks:RegisterServerCallback("MDT:CheckCallsign", function(source, data, cb)
 		if CheckMDTPermissions(source, false) then
-			Database.Game:findOne({
-				collection = "characters",
-				query = {
-					Callsign = data,
-				},
-			}, function(success, results)
-				cb(#results == 0)
-			end)
+			local result = Database:FindOne('characters', { Callsign = data })
+			cb(result == nil)
 		else
 			cb(false)
 		end
@@ -411,24 +274,12 @@ AddEventHandler("MDT:Server:RegisterCallbacks", function()
 
 	Callbacks:RegisterServerCallback("MDT:CheckParole", function(source, data, cb)
 		if CheckMDTPermissions(source, false) then
-			Database.Game:findOne({
-				collection = "characters",
-				query = {
-					SID = data,
-				},
-				options = {
-					projection = {
-						SID = -1,
-						Parole = 1,
-					},
-				},
-			}, function(success, results)
-				if results[1].Parole ~= nil then
-					cb(results[1].Parole)
-				else
-					cb(false)
-				end
-			end)
+			local result = Database:FindOne('characters', { SID = data })
+			if result and result.Parole ~= nil then
+				cb(result.Parole)
+			else
+				cb(false)
+			end
 		else
 			cb(false)
 		end

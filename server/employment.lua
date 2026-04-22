@@ -13,24 +13,16 @@ AddEventHandler("MDT:Server:RegisterCallbacks", function()
 			cb(added)
 
 			if added then
-				Database.Game:updateOne({
-					collection = "characters",
-					query = {
-						SID = data.SID,
-					},
-					update = {
-						["$push"] = {
-							MDTHistory = {
-								Time = (os.time() * 1000),
-								Char = char:GetData("SID"),
-								Log = string.format(
-									"%s Hired Them To %s",
-									char:GetData("First") .. " " .. char:GetData("Last"),
-									json.encode(data)
-								),
-							},
-						},
-					},
+				Database:Update('characters', { SID = data.SID }, {
+					MDTHistory = json.encode(Utils:TableAppend(Database:FindOne('characters', { SID = data.SID })?.MDTHistory or {}, {
+						Time = (os.time() * 1000),
+						Char = char:GetData("SID"),
+						Log = string.format(
+							"%s Hired Them To %s",
+							char:GetData("First") .. " " .. char:GetData("Last"),
+							json.encode(data)
+						),
+					})),
 				})
 			end
 		else
@@ -70,45 +62,36 @@ AddEventHandler("MDT:Server:RegisterCallbacks", function()
 					cb(removed)
 
 					if removed then
-						local update = {
-							["$push"] = {
-								MDTHistory = {
-									Time = (os.time() * 1000),
-									Char = char:GetData("SID"),
-									Log = string.format(
-										"%s Fired Them From Job %s",
-										char:GetData("First") .. " " .. char:GetData("Last"),
-										data.JobId
-									),
-								},
-							},
-						}
+						local existing = Database:FindOne('characters', { SID = data.SID })
+						local history = existing and existing.MDTHistory or {}
+						table.insert(history, {
+							Time = (os.time() * 1000),
+							Char = char:GetData("SID"),
+							Log = string.format(
+								"%s Fired Them From Job %s",
+								char:GetData("First") .. " " .. char:GetData("Last"),
+								data.JobId
+							),
+						})
+
+						local updateFields = { MDTHistory = json.encode(history) }
 
 						if (data.JobId == "police" or data.JobId == "ems") then
-							update["$set"] = {
-								Callsign = false,
-							}
+							updateFields.Callsign = false
 						end
 
-						Database.Game:updateOne({
-							collection = "characters",
-							query = {
-								SID = data.SID,
-							},
-							update = update,
-						}, function(success, results)
-							if success then
-								if (data.JobId == "police" or data.JobId == "ems") then
-									local plyr = Fetch:SID(data.SID)
-									if plyr then
-										local char = plyr:GetData("Character")
-										if char then
-											char:SetData("Callsign", false)
-										end
+						local affected = Database:Update('characters', { SID = data.SID }, updateFields)
+						if affected and affected > 0 then
+							if (data.JobId == "police" or data.JobId == "ems") then
+								local plyr = Fetch:SID(data.SID)
+								if plyr then
+									local char = plyr:GetData("Character")
+									if char then
+										char:SetData("Callsign", false)
 									end
 								end
 							end
-						end)
+						end
 					end
 				else
 					cb(false)
@@ -154,25 +137,18 @@ AddEventHandler("MDT:Server:RegisterCallbacks", function()
 					cb(updated)
 
 					if updated then
-						Database.Game:updateOne({
-							collection = "characters",
-							query = {
-								SID = data.SID,
-							},
-							update = {
-								["$push"] = {
-									MDTHistory = {
-										Time = (os.time() * 1000),
-										Char = char:GetData("SID"),
-										Log = string.format(
-											"%s Promoted Them To %s",
-											char:GetData("First") .. " " .. char:GetData("Last"),
-											json.encode(newJobData)
-										),
-									},
-								},
-							},
+						local existing = Database:FindOne('characters', { SID = data.SID })
+						local history = existing and existing.MDTHistory or {}
+						table.insert(history, {
+							Time = (os.time() * 1000),
+							Char = char:GetData("SID"),
+							Log = string.format(
+								"%s Promoted Them To %s",
+								char:GetData("First") .. " " .. char:GetData("Last"),
+								json.encode(newJobData)
+							),
 						})
+						Database:Update('characters', { SID = data.SID }, { MDTHistory = json.encode(history) })
 					end
 				else
 					cb(false)

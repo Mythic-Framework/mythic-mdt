@@ -1,109 +1,73 @@
 _MDT.Firearm = {
 	Search = function(self, term)
-		local p = promise.new()
-		Database.Game:find({
-			collection = "firearms",
-			query = {
-				["$and"] = {
-					{
-						["$or"] = {
-							{
-								["$expr"] = {
-									["$regexMatch"] = {
-										input = {
-											["$concat"] = { "$Owner.First", " ", "$Owner.Last" },
-										},
-										regex = term,
-										options = "i",
-									},
-								},
-							},
-							{
-								["$expr"] = {
-									["$regexMatch"] = {
-										input = {
-											["$toString"] = "$Owner.SID",
-										},
-										regex = term,
-										options = "i",
-									},
-								},
-							},
-							{
-								Serial = {
-									["$regex"] = term,
-									["$options"] = "i",
-								},
-							},
-						},
-					},
-					{
-						Scratched = false,
-					}
-				}
-			},
-		}, function(success, results)
-			if not success then
-				p:resolve(false)
-				return
+		local results = Database:Find('firearms', {
+			Scratched = false,
+			Serial = Database.LIKE(term),
+		})
+
+		if not results or #results == 0 then
+			results = Database:Find('firearms', { Scratched = false })
+			if results and #term > 0 then
+				local lterm = term:lower()
+				local filtered = {}
+				for k, v in ipairs(results) do
+					local match = false
+					if v.Serial and v.Serial:lower():find(lterm, 1, true) then
+						match = true
+					elseif v.Owner then
+						local fullName = ((v.Owner.First or '') .. ' ' .. (v.Owner.Last or '')):lower()
+						if fullName:find(lterm, 1, true) then
+							match = true
+						elseif tostring(v.Owner.SID or ''):find(lterm, 1, true) then
+							match = true
+						end
+					end
+					if match then
+						table.insert(filtered, v)
+					end
+				end
+				results = filtered
 			end
-			p:resolve(results)
-		end)
+		end
+
+		if not results then
+			return false
+		end
 		GlobalState["MDT:Metric:Search"] = GlobalState["MDT:Metric:Search"] + 1
-		return Citizen.Await(p)
+		return results
 	end,
 	View = function(self, id)
-		local p = promise.new()
-		Database.Game:findOne({
-			collection = "firearms",
-			query = {
-				_id = id,
-			},
-		}, function(success, results)
-			if not success then
-				p:resolve(false)
-				return
-			end
-			p:resolve(results[1])
-		end)
-		return Citizen.Await(p)
+		local result = Database:FindOne('firearms', { _id = id })
+		if not result then
+			return false
+		end
+		return result
 	end,
 	Flags = {
 		Add = function(self, id, data)
-			local p = promise.new()
-			Database.Game:updateOne({
-				collection = "firearms",
-				query = {
-					_id = id,
-				},
-				update = {
-					["$push"] = {
-						Flags = data,
-					},
-				},
-			}, function(success, result)
-				p:resolve(success)
-			end)
-			return Citizen.Await(p)
+			local existing = Database:FindOne('firearms', { _id = id })
+			if not existing then
+				return false
+			end
+			local flags = existing.Flags or {}
+			table.insert(flags, data)
+			local affected = Database:Update('firearms', { _id = id }, { Flags = flags })
+			return affected and affected > 0
 		end,
 		Remove = function(self, id, flag)
-			local p = promise.new()
-			Database.Game:updateOne({
-				collection = "firearms",
-				query = {
-					_id = id,
-				},
-				update = {
-					["$pull"] = {
-						Flags = {
-							Type = flag,
-						},
-					},
-				},
-			}, function(success, result)
-				p:resolve(success)
-			end)
-			return Citizen.Await(p)
+			local existing = Database:FindOne('firearms', { _id = id })
+			if not existing then
+				return false
+			end
+			local flags = existing.Flags or {}
+			for k, v in ipairs(flags) do
+				if v.Type == flag then
+					table.remove(flags, k)
+					break
+				end
+			end
+			local affected = Database:Update('firearms', { _id = id }, { Flags = flags })
+			return affected and affected > 0
 		end,
 	},
 }

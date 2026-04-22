@@ -1,121 +1,69 @@
 _MDT.Warrants = {
 	Search = function(self, term)
-		local p = promise.new()
-		Database.Game:find({
-			collection = "mdt_warrants",
-			query = {},
-		}, function(success, results)
-			if not success then
-				p:resolve(false)
-				return
-			end
-
-			p:resolve(results)
-		end)
-
-		return Citizen.Await(p)
+		local results = Database:Find('mdt_warrants', {})
+		if not results then
+			return false
+		end
+		return results
 	end,
 	View = function(self, id)
-		local p = promise.new()
-		Database.Game:findOne({
-			collection = "mdt_warrants",
-			query = {
-				_id = data,
-			},
-		}, function(success, results)
-			if not success then
-				p:resolve(false)
-				return
-			end
-			p:resolve(results[1])
-		end)
-		return Citizen.Await(p)
+		local result = Database:FindOne('mdt_warrants', { _id = id })
+		if not result then
+			return false
+		end
+		return result
 	end,
 	Create = function(self, data)
-		local p = promise.new()
-		Database.Game:insertOne({
-			collection = "mdt_warrants",
-			document = data,
-		}, function(success, result, insertId)
-			if not success then
-				p:resolve(false)
-				return
-			end
-			data._id = insertId[1]
-			table.insert(_warrants, data)
-			for user, _ in pairs(_onDutyUsers) do
-				TriggerClientEvent("MDT:Client:AddData", user, "warrants", data)
-			end
-			for user, _ in pairs(_onDutyLawyers) do
-				TriggerClientEvent("MDT:Client:AddData", user, "warrants", data)
-			end
-			p:resolve(success)
-		end)
+		local inserted = Database:Insert('mdt_warrants', data)
+		if not inserted then
+			return false
+		end
+		data._id = inserted._id
+		table.insert(_warrants, data)
+		for user, _ in pairs(_onDutyUsers) do
+			TriggerClientEvent("MDT:Client:AddData", user, "warrants", data)
+		end
+		for user, _ in pairs(_onDutyLawyers) do
+			TriggerClientEvent("MDT:Client:AddData", user, "warrants", data)
+		end
 		GlobalState["MDT:Metric:Warrants"] = GlobalState["MDT:Metric:Warrants"] + 1
-		return Citizen.Await(p)
+		return true
 	end,
 	Update = function(self, id, state, updater)
-		local p = promise.new()
-		Database.Game:updateOne({
-			collection = "mdt_warrants",
-			query = {
-				_id = id,
-			},
-			update = {
-				["$set"] = {
-					state = state,
-				},
-				["$push"] = {
-					history = updater,
-				},
-			},
-		}, function(success, result)
-			if not success then
-				p:resolve(false)
-				return
-			end
+		local existing = Database:FindOne('mdt_warrants', { _id = id })
+		if not existing then
+			return false
+		end
 
-			for k, v in ipairs(_warrants) do
-				if v._id == id then
-					v.state = state
+		local history = existing.history or {}
+		table.insert(history, updater)
 
-					for user, _ in pairs(_onDutyUsers) do
-						TriggerClientEvent("MDT:Client:UpdateData", user, "warrants", id, v)
-					end
+		local affected = Database:Update('mdt_warrants', { _id = id }, {
+			state = state,
+			history = json.encode(history),
+		})
 
-					for user, _ in pairs(_onDutyLawyers) do
-						TriggerClientEvent("MDT:Client:UpdateData", user, "warrants", id, v)
-					end
+		if not affected or affected == 0 then
+			return false
+		end
+
+		for k, v in ipairs(_warrants) do
+			if v._id == id then
+				v.state = state
+
+				for user, _ in pairs(_onDutyUsers) do
+					TriggerClientEvent("MDT:Client:UpdateData", user, "warrants", id, v)
+				end
+
+				for user, _ in pairs(_onDutyLawyers) do
+					TriggerClientEvent("MDT:Client:UpdateData", user, "warrants", id, v)
 				end
 			end
+		end
 
-			p:resolve(true)
-		end)
-
-		return Citizen.Await(p)
+		return true
 	end,
 	-- Delete = function(self, id)
-	-- 	local p = promise.new()
-	-- 	Database.Game:updateOne({
-	-- 		collection = "mdt_warrants",
-	-- 		query = {
-	-- 			_id = id,
-	-- 		},
-	-- 	}, function(success, result)
-	-- 		if not success then
-	-- 			p:resolve(false)
-	-- 			return
-	-- 		end
-	-- 		cb(insertId[1])
-
-	-- 		data.doc._id = insertId[1]
-	-- 		table.insert(_warrants, data.doc)
-
-	-- 		for user, _ in pairs(_onDutyUsers) do
-	-- 			TriggerClientEvent("MDT:Client:AddData", user, "warrants", data.doc)
-	-- 		end
-	-- 	end)
-	-- 	return Citizen.Await(p)
 	-- end,
 }
 

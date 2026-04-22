@@ -3,21 +3,11 @@ _MDT.Metrics = {
 		return MDT.Metrics:Get(GlobalState["MDT:Metric:CurrentDay"])
 	end,
 	Get = function(self, key)
-		local p = promise.new()
-		Database.Game:findOne({
-			collection = "mdt_metrics",
-			query = {
-				date = key,
-			},
-		}, function(success, results)
-			if not success or #results == 0 then
-				p:resolve(false)
-				return
-			end
-
-			p:resolve(results[1])
-		end)
-		return Citizen.Await(p)
+		local result = Database:FindOne('mdt_metrics', { date = key })
+		if not result then
+			return false
+		end
+		return result
 	end,
 }
 
@@ -30,7 +20,7 @@ function MetricsStartup()
 	GlobalState["MDT:Metric:Reports"] = r.Reports or 0
 	GlobalState["MDT:Metric:Warrants"] = r.Warrants or 0
 	GlobalState["MDT:Metric:BOLOs"] = r.BOLOs or 0
-	GlobalState["MDT:Metric:Search"] = r.Search or 0
+	GlobalState["MDT:Metric:Search"] = r.Searches or 0
 end
 
 AddEventHandler("MDT:Server:RegisterCallbacks", function()
