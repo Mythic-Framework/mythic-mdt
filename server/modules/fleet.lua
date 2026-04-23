@@ -1,13 +1,14 @@
 _MDT.Fleet = {
 	ViewFleet = function(self, jobId)
-		local results = Database:Find('vehicles', {
-			OwnerType = 1,
-			OwnerId = jobId,
-		})
-
-		if not results then
-			return false
+		local all = Database:Find('vehicles', { OwnerType = 1 })
+		if not all then return false end
+		local results = {}
+		for _, v in ipairs(all) do
+			if v.Owner and tostring(v.Owner.Id) == tostring(jobId) then
+				table.insert(results, v)
+			end
 		end
+		if #results == 0 then return {} end
 
 		for k, v in ipairs(results) do
 			if v.Storage then
@@ -38,7 +39,7 @@ _MDT.Fleet = {
 			})
 		end
 
-		local affected = Database:Update('vehicles', { VIN = VIN }, { GovAssigned = json.encode(ass) })
+		local affected = Database:Update('vehicles', { VIN = VIN }, { GovAssigned = ass })
 		return affected and affected > 0
 	end,
 

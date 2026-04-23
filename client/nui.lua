@@ -142,6 +142,17 @@ RegisterNUICallback("TrackFleetVehicle", function(data, cb)
 	end)
 end)
 
+RegisterNUICallback("Dyn8MarkProperty", function(data, cb)
+	local prop = Properties:Get(data)
+	if prop and prop.location and prop.location.front then
+		ClearGpsPlayerWaypoint()
+		SetNewWaypoint(prop.location.front.x, prop.location.front.y)
+		cb(true)
+	else
+		cb(false)
+	end
+end)
+
 RegisterNUICallback("RevokeSuspension", function(data, cb)
 	Callbacks:ServerCallback("MDT:RevokeLicenseSuspension", data, cb)
 end)
